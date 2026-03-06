@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Palette — Extract Colors from Any Image",
+  title: "Design System Generator — Palette from Image or Brand Colors",
   description:
-    "Upload an image and instantly extract a beautiful color palette. Explore how your palette looks across different UI templates.",
+    "Generate a complete design system palette from any image or brand color. Get 50–900 scales, neutral greys, semantic colors, WCAG accessibility checks, and export tokens for CSS, Tailwind, and Figma.",
 };
 
 export default function RootLayout({
