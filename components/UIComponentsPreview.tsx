@@ -68,31 +68,61 @@ function ButtonCell({
     danger:    { bg: e["500"], color: eText },
   };
 
+  // const stateStyle: Record<string, Partial<BtnStyle>> = {
+  //   primary: {
+  //     hover:    { bg: p["600"] },
+  //     focused:  { bg: p["500"] },
+  //     active:   { bg: p["700"] },
+  //     disabled: { bg: p["200"], color: p["500"], opacity: 0.7, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   secondary: {
+  //     hover:    { bg: p["50"], border: p["300"], color: p["700"] },
+  //     focused:  { bg: p["50"], border: p["500"] },
+  //     active:   { bg: p["100"], border: p["600"], color: p["800"] },
+  //     disabled: { opacity: 0.5, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   ghost: {
+  //     hover:    { bg: p["50"] },
+  //     focused:  { bg: p["50"], border: p["500"] },
+  //     active:   { bg: p["100"] },
+  //     disabled: { opacity: 0.4, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   danger: {
+  //     hover:    { bg: e["600"] },
+  //     focused:  { bg: e["500"] },
+  //     active:   { bg: e["700"] },
+  //     disabled: { bg: e["200"], color: e["500"], opacity: 0.6, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  // };
+
   const stateStyle: Record<string, Partial<BtnStyle>> = {
-    primary: {
+    primary: ({
       hover:    { bg: p["600"] },
       focused:  { bg: p["500"] },
       active:   { bg: p["700"] },
       disabled: { bg: p["200"], color: p["500"], opacity: 0.7, cursor: "not-allowed" },
-    }[state] ?? {},
-    secondary: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    secondary: ({
       hover:    { bg: p["50"], border: p["300"], color: p["700"] },
       focused:  { bg: p["50"], border: p["500"] },
       active:   { bg: p["100"], border: p["600"], color: p["800"] },
       disabled: { opacity: 0.5, cursor: "not-allowed" },
-    }[state] ?? {},
-    ghost: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    ghost: ({
       hover:    { bg: p["50"] },
       focused:  { bg: p["50"], border: p["500"] },
       active:   { bg: p["100"] },
       disabled: { opacity: 0.4, cursor: "not-allowed" },
-    }[state] ?? {},
-    danger: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    danger: ({
       hover:    { bg: e["600"] },
       focused:  { bg: e["500"] },
       active:   { bg: e["700"] },
       disabled: { bg: e["200"], color: e["500"], opacity: 0.6, cursor: "not-allowed" },
-    }[state] ?? {},
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
   };
 
   const resolved: BtnStyle = { ...base[variant], ...stateStyle[variant] };
@@ -159,31 +189,61 @@ function ButtonCellWithIcon({
     danger:    { bg: e["500"], color: eText },
   };
 
+  // const stateStyle: Record<string, Partial<BtnStyle>> = {
+  //   primary: {
+  //     hover:    { bg: p["600"] },
+  //     focused:  { bg: p["500"] },
+  //     active:   { bg: p["700"] },
+  //     disabled: { bg: p["200"], color: p["500"], opacity: 0.7, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   secondary: {
+  //     hover:    { bg: p["50"], border: p["300"], color: p["700"] },
+  //     focused:  { bg: p["50"], border: p["500"] },
+  //     active:   { bg: p["100"], border: p["600"], color: p["800"] },
+  //     disabled: { opacity: 0.5, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   ghost: {
+  //     hover:    { bg: p["50"] },
+  //     focused:  { bg: p["50"], border: p["500"] },
+  //     active:   { bg: p["100"] },
+  //     disabled: { opacity: 0.4, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  //   danger: {
+  //     hover:    { bg: e["600"] },
+  //     focused:  { bg: e["500"] },
+  //     active:   { bg: e["700"] },
+  //     disabled: { bg: e["200"], color: e["500"], opacity: 0.6, cursor: "not-allowed" },
+  //   }[state] ?? {},
+  // };
+
   const stateStyle: Record<string, Partial<BtnStyle>> = {
-    primary: {
+    primary: ({
       hover:    { bg: p["600"] },
       focused:  { bg: p["500"] },
       active:   { bg: p["700"] },
       disabled: { bg: p["200"], color: p["500"], opacity: 0.7, cursor: "not-allowed" },
-    }[state] ?? {},
-    secondary: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    secondary: ({
       hover:    { bg: p["50"], border: p["300"], color: p["700"] },
       focused:  { bg: p["50"], border: p["500"] },
       active:   { bg: p["100"], border: p["600"], color: p["800"] },
       disabled: { opacity: 0.5, cursor: "not-allowed" },
-    }[state] ?? {},
-    ghost: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    ghost: ({
       hover:    { bg: p["50"] },
       focused:  { bg: p["50"], border: p["500"] },
       active:   { bg: p["100"] },
       disabled: { opacity: 0.4, cursor: "not-allowed" },
-    }[state] ?? {},
-    danger: {
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
+
+    danger: ({
       hover:    { bg: e["600"] },
       focused:  { bg: e["500"] },
       active:   { bg: e["700"] },
       disabled: { bg: e["200"], color: e["500"], opacity: 0.6, cursor: "not-allowed" },
-    }[state] ?? {},
+    } as Record<string, Partial<BtnStyle>>)[state] ?? {},
   };
 
   const resolved: BtnStyle = { ...base[variant], ...stateStyle[variant] };
