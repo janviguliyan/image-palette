@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { DesignSystem, SCALE_STEPS } from "@/lib/colorUtils";
+import {
+  buildTypographyCss, buildSpacingCss, buildRadiusCss, buildShadowCss,
+  buildTypographyTailwind, buildSpacingTailwind, buildRadiusTailwind, buildShadowTailwind,
+  buildFoundationFigmaTokens,
+} from "@/lib/designTokens";
 
 type ExportType = "css" | "tailwind" | "figma";
 
@@ -21,12 +26,17 @@ function buildCss(ds: DesignSystem): string {
     ["warning",   ds.semantic.warning],
     ["info",      ds.semantic.info],
   ];
+  lines.push("\n  /* ─── Colors ─────────────────────────────────────── */");
   for (const [name, scale] of groups) {
     lines.push(`\n  /* ${name.charAt(0).toUpperCase() + name.slice(1)} */`);
     for (const step of SCALE_STEPS) {
       lines.push(`  --color-${name}-${step}: ${scale[step]};`);
     }
   }
+  lines.push(buildTypographyCss());
+  lines.push(buildSpacingCss());
+  lines.push(buildRadiusCss());
+  lines.push(buildShadowCss());
   lines.push("\n}");
   return lines.join("\n");
 }
@@ -43,13 +53,17 @@ function buildTailwind(ds: DesignSystem): string {
     ["warning",   ds.semantic.warning],
     ["info",      ds.semantic.info],
   ];
-  const lines = ["// tailwind.config.js → theme.extend.colors", "colors: {"];
+  const lines = ["// tailwind.config.js → theme.extend", "// Colors", "colors: {"];
   for (const [name, scale] of groups) {
     lines.push(`  ${name}: {`);
     for (const step of SCALE_STEPS) lines.push(`    "${step}": "${scale[step]}",`);
     lines.push("  },");
   }
   lines.push("},");
+  lines.push(buildTypographyTailwind());
+  lines.push(buildSpacingTailwind());
+  lines.push(buildRadiusTailwind());
+  lines.push(buildShadowTailwind());
   return lines.join("\n");
 }
 
@@ -69,6 +83,8 @@ function buildFigma(ds: DesignSystem): string {
   for (const [name, scale] of groups) {
     for (const step of SCALE_STEPS) tokens[`color.${name}.${step}`] = scale[step];
   }
+  const foundation = buildFoundationFigmaTokens();
+  Object.assign(tokens, foundation);
   return JSON.stringify(tokens, null, 2);
 }
 
@@ -77,22 +93,22 @@ function buildFigma(ds: DesignSystem): string {
 const STEPS: Record<ExportType, string[]> = {
   css: [
     "Paste the :root { } block into your global stylesheet (e.g. globals.css or app.css)",
-    "All 90 design tokens are now available as CSS custom properties across your project",
-    "Use with var(): background: var(--color-primary-500); color: var(--color-gray-900);",
-    "Works with any framework — React, Vue, Svelte, Angular, or plain HTML",
+    "All design tokens are now available as CSS custom properties: colors, typography, spacing, radius, and shadows",
+    "Colors: var(--color-primary-500) · Typography: var(--text-h1) · Spacing: var(--space-4)",
+    "Radius: var(--radius-md) · Shadows: var(--shadow-md) — works with any framework",
   ],
   tailwind: [
     "Open tailwind.config.js (or tailwind.config.ts) at the root of your project",
-    "Inside theme.extend, add or replace the colors key with the pasted snippet",
+    "Inside theme.extend, paste the snippet — includes colors, fontSize, spacing, borderRadius, and boxShadow",
     "Restart your dev server: npm run dev",
-    "Use Tailwind utility classes: bg-primary-500, text-gray-900, border-error-400, ring-accent-300",
+    "Use utilities like: bg-primary-500, text-h1, p-4, rounded-md, shadow-lg",
   ],
   figma: [
-    'Install the "Design Tokens" or "Variables Import" plugin from the Figma Community',
-    "Open the plugin: Plugins → Design Tokens → Import JSON",
-    "Paste the copied JSON into the plugin input field and click Import",
-    "90 color tokens appear in Local Variables under a new collection",
-    "Apply variables to fills, strokes, and effects via the Variables panel (Shift+V)",
+    'Install the "Design Tokens" or "Tokens Studio" plugin from the Figma Community',
+    "Open the plugin: Plugins → Tokens Studio → Import JSON",
+    "Paste the copied JSON — includes color, typography, spacing, radius, and shadow tokens",
+    "Tokens appear in Local Variables — apply to fills, strokes, text, and effects via the Variables panel (Shift+V)",
+    "Use color styles for swatches, text styles for typography, and effect styles for shadows",
   ],
 };
 
@@ -156,7 +172,7 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
                 Copied to Clipboard
               </p>
               <p className="font-mono text-[8px] text-[#888] mt-0.5">
-                {TAB_LABELS[triggeredType]} · 90 tokens
+                {TAB_LABELS[triggeredType]} · Colors + Typography + Spacing + Radius + Shadows
               </p>
             </div>
           </div>
@@ -254,7 +270,7 @@ export default function ExportTriggers({ ds }: Props) {
     <>
       <div className="border-b-2 border-[#0a0a0a] flex flex-col sm:flex-row">
         {/* Label cell */}
-        <div className="border-b sm:border-b-0 sm:border-r-2 border-[#0a0a0a] px-8 md:px-12 py-5 flex items-center shrink-0">
+        <div className="border-b sm:border-b-0 sm:border-r-2 border-[#0a0a0a] px-8 md:px-12 py-7 flex items-center shrink-0">
           <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#888]">Copy As</p>
         </div>
 
@@ -264,17 +280,17 @@ export default function ExportTriggers({ ds }: Props) {
             <button
               key={type}
               onClick={() => handleClick(type)}
-              className="group flex-1 flex items-center gap-4 px-8 md:px-10 py-5 hover:bg-[#f0f0ec] transition-colors text-left"
+              className="group flex-1 flex items-center gap-5 px-8 md:px-12 py-7 hover:bg-[#f0f0ec] transition-colors text-left"
             >
               {/* Arrow icon */}
-              <div className="w-8 h-8 border border-[#0a0a0a] flex items-center justify-center shrink-0 transition-all group-hover:bg-[#0a0a0a]">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="transition-colors group-hover:stroke-white stroke-[#0a0a0a]">
+              <div className="w-10 h-10 border-2 border-[#0a0a0a] flex items-center justify-center shrink-0 transition-all group-hover:bg-[#0a0a0a]">
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" className="transition-colors group-hover:stroke-white stroke-[#0a0a0a]">
                   <path d="M6 1v7M3 5l3 3 3-3" strokeWidth="1.2" strokeLinecap="square" />
                 </svg>
               </div>
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#0a0a0a]">{label}</p>
-                <p className="font-mono text-[8px] text-[#aaa] mt-0.5">{subLabel}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0a0a0a]">{label}</p>
+                <p className="font-mono text-[8px] text-[#aaa] mt-1">{subLabel}</p>
               </div>
             </button>
           ))}

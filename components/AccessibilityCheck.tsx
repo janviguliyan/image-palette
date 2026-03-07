@@ -202,16 +202,19 @@ export default function AccessibilityCheck({ ds }: Props) {
   return (
     <div className="border-b-2 border-[#0a0a0a]">
       {/* Section header */}
-      <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-5 flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-6">
-        <div>
-          <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-2">Accessibility</p>
-          <h2 className="font-black text-[1.75rem] uppercase leading-none tracking-tighter text-[#0a0a0a]">
-            Contrast Pairs
+      <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
+        <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
+          04
+        </span>
+        <div className="relative">
+          <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Accessibility</p>
+          <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
+            Contrast<br />Pairs
           </h2>
+          <p className="font-mono text-[9px] text-[#888] mt-6">
+            Showing only WCAG AA-passing combinations from your palette
+          </p>
         </div>
-        <p className="font-mono text-[9px] text-[#888] sm:mb-1 sm:ml-auto max-w-xs text-right leading-relaxed">
-          Showing only WCAG AA-passing combinations from your palette
-        </p>
       </div>
 
       {/* Disclaimer */}
@@ -239,7 +242,7 @@ export default function AccessibilityCheck({ ds }: Props) {
       </div>
 
       {/* Grid */}
-      <div className="px-8 md:px-12 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="px-8 md:px-12 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {combos.length === 0 ? (
           <p className="col-span-full font-mono text-[10px] text-[#aaa] text-center py-8">
             No WCAG AA-passing combinations found in this palette.

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { generateHarmoniousColors, normalizeHex } from "@/lib/colorUtils";
+import { generateHarmonyColors, normalizeHex, HARMONY_MODES } from "@/lib/colorUtils";
+import type { HarmonyMode } from "@/lib/colorUtils";
 
 export interface ManualRoles {
   primary: string;
@@ -35,6 +36,7 @@ export default function SplitHomepage({
 }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [harmonyMode, setHarmonyMode] = useState<HarmonyMode>("split-complementary");
 
   // All optional — only primary is required. Empty = auto-generate from primary.
   const [fields, setFields] = useState<Record<keyof ManualRoles, string>>({
@@ -102,7 +104,7 @@ export default function SplitHomepage({
     if (accent)    explicitKeys.push("accent");
 
     // Auto-fill from primary for any missing
-    const generated = generateHarmoniousColors(primary);
+    const generated = generateHarmonyColors(primary, harmonyMode);
 
     const roles: ManualRoles = {
       primary,
@@ -115,9 +117,9 @@ export default function SplitHomepage({
     onManualGenerate(roles, explicitKeys);
   };
 
-  // Live preview: if primary is valid, preview harmonious colors for empty slots
+  // Live preview: if primary is valid, preview harmony colors for empty slots
   const primaryValid = fields.primary && isValidHex(fields.primary);
-  const generated = primaryValid ? generateHarmoniousColors(normalizeHex(fields.primary)) : null;
+  const generated = primaryValid ? generateHarmonyColors(normalizeHex(fields.primary), harmonyMode) : null;
 
   const getSwatchColor = (role: keyof ManualRoles): string => {
     const val = fields[role];
@@ -134,15 +136,15 @@ export default function SplitHomepage({
   return (
     <div className="flex flex-col" style={{ minHeight: "100svh" }}>
 
-      {/* ── Slim top bar ── */}
-      <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-3.5 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-3 h-3 bg-[#0a0a0a]" />
+      {/* ── Top bar ── */}
+      <div className="border-b-2 border-[#0a0a0a] px-8 md:px-12 py-5 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-3.5 h-3.5 bg-[#0a0a0a]" />
           <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#0a0a0a]">
             Design System Generator
           </span>
         </div>
-        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#bbb] hidden sm:block">
+        <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
           Generate · Export · Use
         </span>
       </div>
@@ -180,7 +182,7 @@ export default function SplitHomepage({
 
         {/* ── LEFT: Image upload ── */}
         <div
-          className={`relative flex flex-col cursor-crosshair select-none min-h-[55vmin] md:min-h-0 transition-colors duration-150 ${
+          className={`relative flex flex-col cursor-crosshair select-none min-h-[60vmin] md:min-h-0 transition-colors duration-150 ${
             isDragging ? "bg-[#f0f0ec]" : "hover:bg-[#f5f5f3]"
           }`}
           onDrop={onDrop}
@@ -188,28 +190,16 @@ export default function SplitHomepage({
           onDragLeave={() => setIsDragging(false)}
           onClick={() => !isLoading && inputRef.current?.click()}
         >
-          {/* Subtle crosshairs */}
+          {/* Corner marks */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden>
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-[#0a0a0a] opacity-[0.04]" />
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#0a0a0a] opacity-[0.04]" />
-            {/* {["top-8 left-8", "top-8 right-8", "bottom-8 left-8", "bottom-8 right-8"].map((pos) => (
-              <div key={pos} className={`absolute ${pos} w-6 h-6 opacity-10`}>
-                <div className="absolute top-0 left-0 w-full h-px bg-[#0a0a0a]" />
-                <div className="absolute top-0 left-0 h-full w-px bg-[#0a0a0a]" />
-              </div>
-            ))} */}
-            {/* top-left */}
-            <div className="absolute top-8 left-8 w-6 h-6 border-t border-l border-black opacity-40" />
-            {/* top-right */}
-            <div className="absolute top-8 right-8 w-6 h-6 border-t border-r border-black opacity-40" />
-            {/* bottom-left */}
-            <div className="absolute bottom-8 left-8 w-6 h-6 border-b border-l border-black opacity-40" />
-            {/* bottom-right */}
-            <div className="absolute bottom-8 right-8 w-6 h-6 border-b border-r border-black opacity-40" />
+            <div className="absolute top-8 left-8 w-5 h-5 border-t-2 border-l-2 border-[#0a0a0a] opacity-30" />
+            <div className="absolute top-8 right-8 w-5 h-5 border-t-2 border-r-2 border-[#0a0a0a] opacity-30" />
+            <div className="absolute bottom-8 left-8 w-5 h-5 border-b-2 border-l-2 border-[#0a0a0a] opacity-30" />
+            <div className="absolute bottom-8 right-8 w-5 h-5 border-b-2 border-r-2 border-[#0a0a0a] opacity-30" />
           </div>
 
-          <div className="relative flex flex-col h-full p-8 md:p-12 lg:p-16">
-            <div className="flex items-start justify-between mb-1">
+          <div className="relative flex flex-col h-full p-10 md:p-14 lg:p-20">
+            <div className="flex items-start justify-between">
               <span className="font-mono text-[9px] uppercase tracking-[0.5em] text-[#aaa]">01</span>
               <div className="flex gap-4">
                 {["JPG", "PNG", "WEBP", "GIF"].map((f) => (
@@ -218,55 +208,36 @@ export default function SplitHomepage({
               </div>
             </div>
 
-            <div className="py-10 md:py-14">
+            <div className="py-12 md:py-16">
               <h2 className="font-black text-[clamp(3rem,7vw,5.5rem)] uppercase leading-[0.86] tracking-tighter text-[#0a0a0a]">
                 {isDragging ? "Release →" : <span>From<br />Image</span>}
               </h2>
             </div>
 
             <div
-              className={`relative flex flex-col items-center justify-center border-2 border-dashed border-[#0a0a0a] h-[38vmin] transition-colors duration-150 ${
-                isDragging ? "bg-[#f0f0ec]" : "hover:bg-[#f5f5f3]"
+              className={`relative flex flex-col items-center justify-center border-2 border-dashed border-[#0a0a0a] min-h-[42vmin] md:min-h-[280px] transition-colors duration-150 ${
+                isDragging ? "bg-[#f0f0ec]" : ""
               }`}
             >
-              
-              <div className="border-2 border-[#0a0a0a] w-12 h-12 flex items-center justify-center mb-6">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <div className="border-2 border-[#0a0a0a] w-14 h-14 flex items-center justify-center mb-8">
+                <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
                   <path d="M9 13V4M9 4L5 8M9 4l4 4" stroke="currentColor" strokeWidth="1.5"/>
                   <path d="M2.5 15h13" stroke="currentColor" strokeWidth="1.5"/>
                 </svg>
               </div>
 
-              <p className="font-bold text-xl uppercase tracking-tight">
+              <p className="font-black text-xl uppercase tracking-tight">
                 Drop Image Here
               </p>
 
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#999] mt-2">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#999] mt-3">
                 Or Click Anywhere To Browse
               </p>
 
-              <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#bbb] mt-4">
-                JPG | PNG | WEBP | GIF | AVIF · MAX 10MB
+              <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#bbb] mt-5">
+                JPG · PNG · WEBP · GIF · AVIF · max 10 MB
               </p>
-
             </div>
-
-            {/* <div className="flex items-end justify-between mt-auto">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#555] mb-1">
-                  {isDragging ? "Drop to analyze" : "Drop or click to upload"}
-                </p>
-                <p className="font-mono text-[8px] uppercase tracking-widest text-[#bbb]">
-                  K-Means · Max 10 MB
-                </p>
-              </div>
-              <div className={`border-2 border-[#0a0a0a] w-11 h-11 flex items-center justify-center transition-all ${isDragging ? "bg-[#0a0a0a]" : ""}`}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={isDragging ? "text-white" : "text-[#0a0a0a]"}>
-                  <path d="M9 13V4M9 4L5 8M9 4l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
-                  <path d="M2.5 15h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
-                </svg>
-              </div>
-            </div> */}
           </div>
 
           <input
@@ -279,24 +250,65 @@ export default function SplitHomepage({
         </div>
 
         {/* ── RIGHT: Brand Colors ── */}
-        <div className="flex flex-col p-8 md:p-12 lg:p-16 min-h-[55vmin] md:min-h-0">
-          <span className="font-mono text-[9px] uppercase tracking-[0.5em] text-[#aaa] mb-1">02</span>
+        <div className="flex flex-col p-10 md:p-14 lg:p-20 min-h-[60vmin] md:min-h-0">
+          <span className="font-mono text-[9px] uppercase tracking-[0.5em] text-[#aaa]">02</span>
 
-          <div className="py-10 md:py-14">
+          <div className="py-12 md:py-16">
             <h2 className="font-black text-[clamp(3rem,7vw,5.5rem)] uppercase leading-[0.86] tracking-tighter text-[#0a0a0a]">
               From<br />Brand<br />Colors
             </h2>
           </div>
 
+          {/* Harmony mode picker */}
+          <div className="mb-8">
+            <p className="font-mono text-[8px] uppercase tracking-[0.4em] text-[#aaa] mb-3">
+              Color Harmony
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {HARMONY_MODES.map((mode) => (
+                <button
+                  key={mode.id}
+                  onClick={() => setHarmonyMode(mode.id)}
+                  className="font-mono text-[8px] uppercase tracking-[0.2em] px-3 py-1.5 transition-all"
+                  style={{
+                    backgroundColor: harmonyMode === mode.id ? "#0a0a0a" : "transparent",
+                    color: harmonyMode === mode.id ? "#f9f9f7" : "#888",
+                    border: harmonyMode === mode.id ? "1px solid #0a0a0a" : "1px solid #e8e8e4",
+                  }}
+                  title={mode.label}
+                >
+                  {mode.short}
+                </button>
+              ))}
+            </div>
+            {primaryValid && generated && (
+              <div className="flex gap-1.5 mt-3">
+                {["primary", "secondary", "tertiary", "accent"].map((role) => {
+                  const val = role === "primary"
+                    ? normalizeHex(fields.primary)
+                    : generated[role as keyof typeof generated];
+                  return (
+                    <div
+                      key={role}
+                      className="flex-1 h-3"
+                      style={{ backgroundColor: val }}
+                      title={`${role}: ${val}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* Color inputs */}
-          <div className="space-y-5 mb-8">
+          <div className="space-y-7 mb-10">
             {ROLE_LABELS.map((role) => {
               const auto = isAutoGenerated(role);
               const swatchColor = getSwatchColor(role);
               return (
-                <div key={role} className="flex items-center gap-4">
+                <div key={role} className="flex items-center gap-5">
                   {/* Label */}
-                  <div className="min-w-[72px]">
+                  <div className="min-w-[80px]">
                     <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#888]">
                       {role}
                     </span>
@@ -311,9 +323,9 @@ export default function SplitHomepage({
                   </div>
 
                   {/* Swatch + native picker */}
-                  <div className="relative w-7 h-7 shrink-0">
+                  <div className="relative w-8 h-8 shrink-0">
                     <div
-                      className="w-7 h-7 border border-[#d8d8d4] transition-colors"
+                      className="w-8 h-8 border border-[#d8d8d4] transition-colors"
                       style={{ backgroundColor: swatchColor, opacity: auto ? 0.5 : 1 }}
                     />
                     <input
@@ -334,19 +346,19 @@ export default function SplitHomepage({
                         ? generated[role as keyof typeof generated]
                         : role === "primary" ? "#6366f1" : "optional"
                     }
-                    className="flex-1 font-mono text-[11px] text-[#0a0a0a] bg-transparent border-b border-[#e8e8e4] pb-1.5 outline-none focus:border-[#0a0a0a] transition-colors placeholder-[#ccc] max-w-[140px]"
+                    className="flex-1 font-mono text-[11px] text-[#0a0a0a] bg-transparent border-b-2 border-[#e8e8e4] pb-2 outline-none focus:border-[#0a0a0a] transition-colors placeholder-[#ccc] max-w-[150px]"
                   />
                 </div>
               );
             })}
 
             {formError && (
-              <p className="font-mono text-[9px] text-[#dc2626]">{formError}</p>
+              <p className="font-mono text-[9px] text-[#dc2626] pt-1">{formError}</p>
             )}
 
             {primaryValid && (
-              <p className="font-mono text-[8px] text-[#aaa] leading-relaxed">
-                Secondary, Tertiary and Accent will be auto-generated from Primary if left blank.
+              <p className="font-mono text-[8px] text-[#aaa] leading-relaxed pt-1">
+                Secondary, Tertiary and Accent auto-generated from Primary if left blank.
               </p>
             )}
           </div>
@@ -356,7 +368,7 @@ export default function SplitHomepage({
             <button
               onClick={handleGenerate}
               disabled={isLoading}
-              className="font-mono text-[10px] uppercase tracking-widest bg-[#0a0a0a] text-white px-8 py-3.5 hover:bg-[#1a1a1a] active:bg-[#333] transition-colors disabled:opacity-40"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] bg-[#0a0a0a] text-white px-10 py-4 hover:bg-[#1a1a1a] active:bg-[#333] transition-colors disabled:opacity-40"
             >
               Generate System →
             </button>
@@ -365,12 +377,12 @@ export default function SplitHomepage({
       </div>
 
       {/* ── Bottom bar ── */}
-      <div className="border-t border-[#0a0a0a] px-8 md:px-12 py-3 flex items-center justify-between shrink-0">
-        <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">
-          50–900 Scales · Neutral Greys · Semantic Colors · WCAG · CSS / Tailwind / Figma
+      <div className="border-t-2 border-[#0a0a0a] px-8 md:px-12 py-4 flex items-center justify-between shrink-0">
+        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
+          Colors · Typography · Spacing · Radius · Shadows · Components · WCAG · CSS / Tailwind / Figma
         </p>
-        <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc] hidden sm:block">
-          Janvi Guliyan, {new Date().getFullYear()}
+        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
+          Janvi Guliyan · {new Date().getFullYear()}
         </p>
       </div>
     </div>
