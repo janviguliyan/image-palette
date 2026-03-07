@@ -266,6 +266,72 @@ export function generateHarmoniousColors(primaryHex: string): {
   };
 }
 
+// ── Color Harmony Themes ──────────────────────────────────────────────────────
+
+export type HarmonyMode =
+  | "split-complementary"
+  | "monochromatic"
+  | "analogous"
+  | "complementary"
+  | "triadic"
+  | "tetradic";
+
+export const HARMONY_MODES: { id: HarmonyMode; label: string; short: string }[] = [
+  { id: "split-complementary", label: "Split Complementary", short: "Split" },
+  { id: "analogous",           label: "Analogous",           short: "Analog" },
+  { id: "complementary",       label: "Complementary",       short: "Comp" },
+  { id: "triadic",             label: "Triadic",             short: "Triadic" },
+  { id: "tetradic",            label: "Tetradic",            short: "Tetradic" },
+  { id: "monochromatic",       label: "Monochromatic",       short: "Mono" },
+];
+
+export function generateHarmonyColors(
+  primaryHex: string,
+  mode: HarmonyMode
+): { secondary: string; tertiary: string; accent: string } {
+  const { h, s, l } = hexToHsl(primaryHex);
+  const sat = Math.max(0.4, s);
+
+  switch (mode) {
+    case "monochromatic":
+      return {
+        secondary: hslToHex(h, sat * 0.65, Math.min(0.82, l + 0.22)),
+        tertiary:  hslToHex(h, sat * 0.4,  Math.min(0.92, l + 0.38)),
+        accent:    hslToHex(h, Math.min(1, sat * 1.15), Math.max(0.25, l - 0.18)),
+      };
+    case "analogous":
+      return {
+        secondary: hslToHex((h + 30) % 360,           sat * 0.9,              l),
+        tertiary:  hslToHex((h - 30 + 360) % 360,     sat * 0.85,             l),
+        accent:    hslToHex((h + 15) % 360,            Math.min(1, sat * 1.1), Math.max(0.35, l - 0.08)),
+      };
+    case "complementary":
+      return {
+        secondary: hslToHex((h + 180) % 360,           sat * 0.85,             l),
+        tertiary:  hslToHex((h + 180) % 360,           sat * 0.55,             Math.min(0.78, l + 0.18)),
+        accent:    hslToHex((h + 165) % 360,           Math.min(1, sat * 1.05),l),
+      };
+    case "split-complementary":
+      return {
+        secondary: hslToHex((h + 210) % 360, sat * 0.85, Math.max(0.35, l * 0.95)),
+        tertiary:  hslToHex((h + 150) % 360, sat * 0.75, Math.max(0.38, l * 1.05)),
+        accent:    hslToHex((h + 30)  % 360, Math.min(1, sat * 1.1), l),
+      };
+    case "triadic":
+      return {
+        secondary: hslToHex((h + 120) % 360, sat * 0.85, l),
+        tertiary:  hslToHex((h + 240) % 360, sat * 0.8,  l),
+        accent:    hslToHex((h + 60)  % 360, Math.min(1, sat * 1.1), l),
+      };
+    case "tetradic":
+      return {
+        secondary: hslToHex((h + 90)  % 360, sat * 0.85, l),
+        tertiary:  hslToHex((h + 180) % 360, sat * 0.8,  l),
+        accent:    hslToHex((h + 270) % 360, Math.min(1, sat * 1.05), l),
+      };
+  }
+}
+
 export function buildDesignSystem(roles: {
   primary: string;
   secondary: string;

@@ -112,7 +112,7 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
         {/* ── LEFT: Source ── */}
         <div className="flex flex-col">
           {/* Label */}
-          <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-4">
+          <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-5">
             <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#888]">
               {inputSource === "image" ? "Source Image" : "Input Colors"}
             </p>
@@ -166,7 +166,7 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
 
           {/* Header + theme toggle */}
           <div
-            className="border-b px-8 md:px-12 py-4 flex items-center justify-between"
+            className="border-b px-8 md:px-12 py-5 flex items-center justify-between"
             style={{ borderColor: panelBdr }}
           >
             <p className="font-mono text-[9px] uppercase tracking-[0.4em]" style={{ color: panelMuted }}>
@@ -195,7 +195,7 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
           </div>
 
           {/* Role cards */}
-          <div className="px-8 md:px-12 pt-8 pb-4 flex flex-col gap-0">
+          <div className="px-8 md:px-12 pt-10 pb-6 flex flex-col gap-0">
             {visibleRoles.map(({ key, label, desc }, i) => {
               const hex = ds.roles[key];
               const isCopied = copied === hex;
@@ -203,14 +203,14 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
               return (
                 <div
                   key={key}
-                  className="flex items-center gap-5 py-4 border-b transition-colors"
+                  className="flex items-center gap-5 py-6 border-b transition-colors"
                   style={{ borderColor: panelBdr }}
                 >
                   {/* Swatch — clickable */}
                   <button
                     onClick={() => copy(hex)}
                     title={`Copy ${hex}`}
-                    className="w-14 h-14 shrink-0 flex items-center justify-center relative group overflow-hidden transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                    className="w-16 h-16 shrink-0 flex items-center justify-center relative group overflow-hidden transition-transform hover:scale-[1.03] active:scale-[0.97]"
                     style={{ backgroundColor: hex }}
                   >
                     <div
@@ -270,9 +270,9 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
           </div>
 
           {/* ── Color Usage Context ── */}
-          <div className="border-t mt-4" style={{ borderColor: panelBdr }}>
+          <div className="border-t mt-6" style={{ borderColor: panelBdr }}>
             <div
-              className="px-8 md:px-12 py-4 border-b flex items-center justify-between"
+              className="px-8 md:px-12 py-5 border-b flex items-center justify-between"
               style={{ borderColor: panelBdr }}
             >
               <p className="font-mono text-[9px] uppercase tracking-[0.4em]" style={{ color: panelMuted }}>
@@ -283,7 +283,7 @@ export default function PaletteResults({ ds, imageUrl, inputSource, theme, onThe
               </p>
             </div>
 
-            <div className="px-8 md:px-12 py-5 space-y-3.5">
+            <div className="px-8 md:px-12 py-7 space-y-5">
               {usageRows.map(({ label, hex, shade, description }) => (
                 <button
                   key={label}

@@ -10,6 +10,10 @@ import NeutralColors from "@/components/NeutralColors";
 import SemanticColors from "@/components/SemanticColors";
 import AccessibilityCheck from "@/components/AccessibilityCheck";
 import TemplateSelector from "@/components/TemplateSelector";
+import TypographySystem from "@/components/TypographySystem";
+import FoundationTokens from "@/components/FoundationTokens";
+import UIComponentsPreview from "@/components/UIComponentsPreview";
+import FigmaExportModal from "@/components/FigmaExportModal";
 import {
   mapColorsToRoles,
   buildDesignSystem,
@@ -26,6 +30,7 @@ export default function Home() {
   const [explicitRoleKeys, setExplicitRoleKeys] = useState<(keyof ManualRoles)[]>([]);
   const [inputSource, setInputSource]     = useState<"image" | "manual">("image");
   const [paletteTheme, setPaletteTheme]   = useState<PaletteTheme>("light");
+  const [figmaModalOpen, setFigmaModalOpen] = useState(false);
 
   // ── Derived ─────────────────────────────────────────────────────
   const roles = useMemo(() => {
@@ -116,22 +121,31 @@ export default function Home() {
       {hasResult && designSystem && (
         <div className="animate-up">
 
-          {/* Sticky minimal header */}
+          {/* Sticky header */}
           <header className="sticky top-0 z-40 border-b-2 border-[#0a0a0a] bg-[#f9f9f7]">
-            <div className="flex items-center justify-between px-8 md:px-12 h-12">
-              <div className="flex items-center gap-2.5">
-                <div className="w-3 h-3 bg-[#0a0a0a]" />
+            <div className="flex items-center justify-between px-8 md:px-12 h-16">
+              <div className="flex items-center gap-3">
+                <div className="w-3.5 h-3.5 bg-[#0a0a0a]" />
                 <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#0a0a0a]">
                   Design System Generator
                 </span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-[8px] uppercase tracking-widest text-[#bbb] hidden sm:block">
-                  {inputSource === "image" ? "From Image" : "From Brand Colors"}
+              <div className="flex items-center gap-3 md:gap-6">
+                <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
+                  {inputSource === "image" ? "— From Image" : "— From Brand Colors"}
                 </span>
                 <button
+                  onClick={() => setFigmaModalOpen(true)}
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] px-4 py-2 transition-colors hidden md:block"
+                  style={{ background: designSystem.roles.primary, color: "#fff", border: "none" }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                >
+                  Open in Figma
+                </button>
+                <button
                   onClick={handleReset}
-                  className="font-mono text-[9px] uppercase tracking-widest border border-[#0a0a0a] px-3 py-1.5 hover:bg-[#0a0a0a] hover:text-white transition-colors"
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] border border-[#0a0a0a] px-4 py-2 hover:bg-[#0a0a0a] hover:text-white transition-colors"
                 >
                   ↩ Start Over
                 </button>
@@ -155,16 +169,19 @@ export default function Home() {
           {/* ③ Design System — section wrapper */}
           <div className="border-b-2 border-[#0a0a0a]">
             {/* Section header */}
-            <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-6 flex flex-col sm:flex-row sm:items-end gap-2">
-              <div>
-                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-2">Design Tokens</p>
-                <h2 className="font-black text-[1.75rem] uppercase leading-none tracking-tighter text-[#0a0a0a]">
-                  Design System
+            <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
+              <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
+                03
+              </span>
+              <div className="relative">
+                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Design Tokens</p>
+                <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
+                  Design<br />System
                 </h2>
+                <p className="font-mono text-[9px] text-[#888] mt-6">
+                  50–900 scales · Neutral greys · Semantic colors
+                </p>
               </div>
-              <p className="font-mono text-[9px] text-[#888] sm:mb-1 sm:ml-auto">
-                50–900 scales · Neutral greys · Semantic colors
-              </p>
             </div>
 
             {/* Scales */}
@@ -183,29 +200,46 @@ export default function Home() {
           {/* ④ Accessibility */}
           <AccessibilityCheck ds={designSystem} />
 
-          {/* ⑤ Templates */}
+          {/* ⑤ Typography System */}
+          <TypographySystem />
+
+          {/* ⑥ Foundation Tokens */}
+          <FoundationTokens ds={designSystem} />
+
+          {/* ⑦ UI Components */}
+          <UIComponentsPreview ds={designSystem} />
+
+          {/* ⑧ Templates */}
           <div className="border-b-2 border-[#0a0a0a]">
-            <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-6 flex flex-col sm:flex-row sm:items-end gap-2">
-              <div>
-                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-2">Preview</p>
-                <h2 className="font-black text-[1.75rem] uppercase leading-none tracking-tighter text-[#0a0a0a]">
-                  UI Templates
+            <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
+              <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
+                08
+              </span>
+              <div className="relative">
+                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Preview</p>
+                <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
+                  UI<br />Templates
                 </h2>
+                <p className="font-mono text-[9px] text-[#888] mt-6">
+                  See your palette applied to real UI layouts
+                </p>
               </div>
-              <p className="font-mono text-[9px] text-[#888] sm:mb-1 sm:ml-auto">
-                See your palette applied to real UI layouts
-              </p>
             </div>
             <TemplateSelector colors={templateColors} />
           </div>
 
+          {/* Figma export modal */}
+          {figmaModalOpen && (
+            <FigmaExportModal ds={designSystem} onClose={() => setFigmaModalOpen(false)} />
+          )}
+
           {/* Footer */}
-          <footer className="px-8 md:px-12 py-5 flex items-center justify-between">
-            <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">
+          <footer className="px-8 md:px-12 py-8 flex items-center justify-between border-t border-[#e8e8e4]">
+            <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
               Design System Generator
             </p>
-            <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">
-              Janvi Guliyan, {new Date().getFullYear()}
+            <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
+              Janvi Guliyan · {new Date().getFullYear()}
             </p>
           </footer>
         </div>
