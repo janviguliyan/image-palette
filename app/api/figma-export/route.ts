@@ -38,26 +38,29 @@ export async function POST(req: NextRequest) {
     let colIdx = 0;
     let varIdx = 0;
 
-    function makeCollection(name: string) {
+    // function makeCollection(name: string) {
+    const makeCollection = (name: string) => {
       const colId = `vco:${colIdx}`;
       const modeId = `vco:${colIdx}:m`;
       colIdx++;
       variableCollections.push({ action: "CREATE", id: colId, name, initialModeId: modeId });
       variableModes.push({ action: "CREATE", id: modeId, name: "Default", variableCollectionId: colId });
       return { colId, modeId };
-    }
+    };
 
-    function addColorVar(name: string, colId: string, modeId: string, hex: string) {
+    // function addColorVar(name: string, colId: string, modeId: string, hex: string) {
+    const addColorVar = (name: string, colId: string, modeId: string, hex: string) => {
       const vid = `v:${varIdx++}`;
       variables.push({ action: "CREATE", id: vid, name, variableCollectionId: colId, resolvedType: "COLOR" });
       variableValues.push({ action: "UPDATE", variableId: vid, modeId, value: hexToFigmaRgb(hex) });
-    }
+    };
 
-    function addFloatVar(name: string, colId: string, modeId: string, px: number) {
+    // function addFloatVar(name: string, colId: string, modeId: string, px: number) {
+    const addFloatVar = (name: string, colId: string, modeId: string, px: number) => {
       const vid = `v:${varIdx++}`;
       variables.push({ action: "CREATE", id: vid, name, variableCollectionId: colId, resolvedType: "FLOAT" });
       variableValues.push({ action: "UPDATE", variableId: vid, modeId, value: px });
-    }
+    };
 
     // ── 1. Color collections ──────────────────────────────────────────────────
     const colorGroups: [string, Record<string, string>][] = [
