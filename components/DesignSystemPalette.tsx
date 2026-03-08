@@ -64,7 +64,7 @@ function ColorSwatch({
         )}
       </div>
       <div className="w-full px-1 py-1">
-        <span className="font-mono text-[8px] block" style={{ color: contrast, opacity: 0.65 }}>
+        <span className="font-mono text-[12px] block" style={{ color: contrast, opacity: 0.65 }}>
           {step}
         </span>
       </div>
@@ -92,10 +92,10 @@ export default function DesignSystemPalette({ scales, roles }: Props) {
     <div className="border-b border-[#e8e8e4]">
       {/* Sub-header */}
       <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-        <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">
           Color Scales
         </p>
-        <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#ccc]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#ccc]">
           Click to copy hex
         </p>
       </div>
@@ -103,11 +103,11 @@ export default function DesignSystemPalette({ scales, roles }: Props) {
       {/* Scale step labels */}
       <div className="border-b border-[#e8e8e4] flex">
         <div className="w-24 shrink-0 px-4 py-2 border-r border-[#e8e8e4]">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">Role</span>
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">Role</span>
         </div>
         {SCALE_STEPS.map((step) => (
           <div key={step} className="flex-1 px-1 py-2 text-center">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">{step}</span>
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{step}</span>
           </div>
         ))}
       </div>
@@ -120,10 +120,10 @@ export default function DesignSystemPalette({ scales, roles }: Props) {
           <div key={role} className="border-b border-[#e8e8e4] last:border-b-0 flex items-stretch">
             {/* Role label */}
             <div className="w-24 shrink-0 border-r border-[#e8e8e4] px-4 py-3 flex flex-col justify-between">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[#888] block">
+              <span className="font-mono text-[12px] uppercase tracking-widest text-[#888] block">
                 {label}
               </span>
-              <span className="font-mono text-[8px] text-[#bbb] block mt-1">{base.toUpperCase()}</span>
+              <span className="font-mono text-[12px] text-[#bbb] block mt-1">{base.toUpperCase()}</span>
             </div>
             {/* Swatches */}
             <div className="flex flex-1">

@@ -4,7 +4,9 @@ import { useState, useMemo } from "react";
 import SplitHomepage from "@/components/SplitHomepage";
 import type { ManualRoles } from "@/components/SplitHomepage";
 import PaletteResults from "@/components/PaletteResults";
+import UsageSection from "@/components/UsageSection";
 import ExportTriggers from "@/components/ExportTriggers";
+import type { ExportType } from "@/components/ExportTriggers";
 import DesignSystemPalette from "@/components/DesignSystemPalette";
 import NeutralColors from "@/components/NeutralColors";
 import SemanticColors from "@/components/SemanticColors";
@@ -13,13 +15,14 @@ import TemplateSelector from "@/components/TemplateSelector";
 import TypographySystem from "@/components/TypographySystem";
 import FoundationTokens from "@/components/FoundationTokens";
 import UIComponentsPreview from "@/components/UIComponentsPreview";
-import FigmaExportModal from "@/components/FigmaExportModal";
 import {
   mapColorsToRoles,
   buildDesignSystem,
   getPaletteTemperature,
+  type HarmonyMode,
 } from "@/lib/colorUtils";
 import type { PaletteTheme } from "@/components/PaletteResults";
+import type { OverrideMap } from "@/lib/designTokens";
 
 export default function Home() {
   const [colors, setColors]               = useState<string[]>([]);
@@ -30,7 +33,11 @@ export default function Home() {
   const [explicitRoleKeys, setExplicitRoleKeys] = useState<(keyof ManualRoles)[]>([]);
   const [inputSource, setInputSource]     = useState<"image" | "manual">("image");
   const [paletteTheme, setPaletteTheme]   = useState<PaletteTheme>("light");
-  const [figmaModalOpen, setFigmaModalOpen] = useState(false);
+  const [exportTab, setExportTab] = useState<ExportType | null>(null);
+  const [harmonyMode, setHarmonyMode]     = useState<HarmonyMode>("split-complementary");
+  const [primaryFont, setPrimaryFont]     = useState("Inter");
+  const [secondaryFont, setSecondaryFont] = useState("Roboto");
+  const [typographyOverrides, setTypographyOverrides] = useState<OverrideMap>({});
 
   // ── Derived ─────────────────────────────────────────────────────
   const roles = useMemo(() => {
@@ -46,8 +53,6 @@ export default function Home() {
 
   const hasResult = (imageUrl !== null && colors.length > 0) || manualRoles !== null;
 
-  // For template selector — works for both image & manual
-  // Pad to at least 6 so templates can safely destructure c0–c5 without undefined
   const templateColors = useMemo(() => {
     const base = manualRoles
       ? [manualRoles.primary, manualRoles.secondary, manualRoles.tertiary, manualRoles.accent]
@@ -85,13 +90,20 @@ export default function Home() {
     }
   };
 
-  const handleManualGenerate = (roles: ManualRoles, explicitKeys: (keyof ManualRoles)[]) => {
+  const handleManualGenerate = (roles: ManualRoles, explicitKeys: (keyof ManualRoles)[], mode: HarmonyMode) => {
     setManualRoles(roles);
     setExplicitRoleKeys(explicitKeys);
+    setHarmonyMode(mode);
     setColors([]);
     setImageUrl(null);
     setError(null);
     setInputSource("manual");
+  };
+
+  // Called when user edits palette colors in PaletteResults (promotes image colors to manual)
+  const handleRolesChange = (newRoles: ManualRoles) => {
+    setManualRoles(newRoles);
+    if (inputSource !== "manual") setInputSource("manual");
   };
 
   const handleReset = () => {
@@ -104,7 +116,7 @@ export default function Home() {
 
   // ── Render ──────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#f9f9f7]" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
 
       {/* ── HOMEPAGE ── */}
       {!hasResult && (
@@ -121,31 +133,43 @@ export default function Home() {
       {hasResult && designSystem && (
         <div className="animate-up">
 
-          {/* Sticky header */}
-          <header className="sticky top-0 z-40 border-b-2 border-[#0a0a0a] bg-[#f9f9f7]">
-            <div className="flex items-center justify-between px-8 md:px-12 h-16">
-              <div className="flex items-center gap-3">
-                <div className="w-3.5 h-3.5 bg-[#0a0a0a]" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#0a0a0a]">
-                  Design System Generator
+          {/* ── Sticky header (Figma-styled) ── */}
+          <header className="sticky top-0 z-40 bg-white border-b-2 border-black">
+            <div className="flex items-center justify-between px-8 md:px-12 xl:px-20 py-5">
+
+              {/* Logo + App name */}
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="w-[28px] h-[26px] bg-black shrink-0" />
+                <span className="font-mono text-[14px] text-black whitespace-nowrap hidden sm:block">
+                  DESIGN SYSTEM GENERATOR
                 </span>
               </div>
-              <div className="flex items-center gap-3 md:gap-6">
-                <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
-                  {inputSource === "image" ? "— From Image" : "— From Brand Colors"}
-                </span>
+
+              {/* Center subtitle */}
+              <span className="font-mono font-medium text-[16px] md:text-[20px] text-black whitespace-nowrap hidden md:block">
+                {inputSource === "image" ? "FROM IMAGE" : "FROM BRAND COLORS"}
+              </span>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-4 md:gap-6 shrink-0">
                 <button
-                  onClick={() => setFigmaModalOpen(true)}
-                  className="font-mono text-[9px] uppercase tracking-[0.2em] px-4 py-2 transition-colors hidden md:block"
-                  style={{ background: designSystem.roles.primary, color: "#fff", border: "none" }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                  onClick={() => setExportTab("css")}
+                  className="font-mono text-[13px] px-5 py-2.5 flex items-center gap-2 transition-opacity hover:opacity-85"
+                  style={{
+                    backgroundColor: designSystem.roles.primary,
+                    color: "#f6f6f8",
+                    border: `1px solid ${designSystem.roles.primary}`,
+                  }}
                 >
-                  Open in Figma
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 1v7M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
+                    <path d="M1.5 10h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
+                  </svg>
+                  Download / Copy
                 </button>
                 <button
                   onClick={handleReset}
-                  className="font-mono text-[9px] uppercase tracking-[0.2em] border border-[#0a0a0a] px-4 py-2 hover:bg-[#0a0a0a] hover:text-white transition-colors"
+                  className="font-mono text-[13px] border border-black px-5 py-2.5 flex items-center gap-2 hover:bg-black hover:text-white transition-colors"
                 >
                   ↩ Start Over
                 </button>
@@ -153,7 +177,7 @@ export default function Home() {
             </div>
           </header>
 
-          {/* ① Palette section */}
+          {/* ① Color Palette — Section 01 */}
           <PaletteResults
             ds={designSystem}
             imageUrl={imageUrl}
@@ -161,27 +185,50 @@ export default function Home() {
             theme={paletteTheme}
             onThemeChange={setPaletteTheme}
             explicitRoleKeys={inputSource === "manual" ? explicitRoleKeys : undefined}
+            onRolesChange={handleRolesChange}
+            initialHarmonyMode={harmonyMode}
           />
 
-          {/* ② Export triggers */}
-          <ExportTriggers ds={designSystem} />
+          {/* ② Usage — Section 02 */}
+          <UsageSection
+            ds={designSystem}
+            theme={paletteTheme}
+            onThemeChange={setPaletteTheme}
+          />
 
-          {/* ③ Design System — section wrapper */}
-          <div className="border-b-2 border-[#0a0a0a]">
+          {/* Export triggers — also controlled by header button via externalTab */}
+          <ExportTriggers
+            ds={designSystem}
+            primaryFont={primaryFont}
+            secondaryFont={secondaryFont}
+            typographyOverrides={typographyOverrides}
+            externalTab={exportTab}
+            onExternalClose={() => setExportTab(null)}
+          />
+
+          {/* ③ Color Scales — Section 03 */}
+          <div className="border-t-2 border-black">
             {/* Section header */}
-            <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
-              <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
-                03
-              </span>
-              <div className="relative">
-                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Design Tokens</p>
-                <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
-                  Design<br />System
-                </h2>
-                <p className="font-mono text-[9px] text-[#888] mt-6">
-                  50–900 scales · Neutral greys · Semantic colors
+            <div className="flex flex-col gap-10 p-8 md:p-12 xl:p-20 border-b border-black/10">
+              <div className="flex items-start justify-between whitespace-nowrap">
+                <div
+                  className="font-black text-black"
+                  style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(3rem, 8vw, 7.5rem)", lineHeight: 0.85 }}
+                >
+                  <p className="mb-0">Color</p>
+                  <p>Scales</p>
+                </div>
+                <p
+                  className="font-black"
+                  style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(3rem, 8vw, 7.5rem)", lineHeight: 0.85, color: "rgba(0,0,0,0.06)" }}
+                >
+                  03
                 </p>
               </div>
+              <p className="font-mono text-[16px] text-[#1a1c1e] max-w-2xl">
+                This section has the full color scales from 50 to 900 scales. Includes main palette,
+                neutral greys and semantic colors. Hover to copy a particular color.
+              </p>
             </div>
 
             {/* Scales */}
@@ -197,30 +244,36 @@ export default function Home() {
             <SemanticColors semantic={designSystem.semantic} />
           </div>
 
-          {/* ④ Accessibility */}
+          {/* ④ Accessibility — Section 04 */}
           <AccessibilityCheck ds={designSystem} />
 
-          {/* ⑤ Typography System */}
-          <TypographySystem />
+          {/* ⑤ Typography System — Section 05 */}
+          <TypographySystem
+            primaryFont={primaryFont}
+            secondaryFont={secondaryFont}
+            onPrimaryFontChange={setPrimaryFont}
+            onSecondaryFontChange={setSecondaryFont}
+            onOverridesChange={setTypographyOverrides}
+          />
 
-          {/* ⑥ Foundation Tokens */}
+          {/* ⑥ Foundation Tokens — Section 06 (keep as-is) */}
           <FoundationTokens ds={designSystem} />
 
-          {/* ⑦ UI Components */}
+          {/* ⑦ UI Components — Section 07 (keep as-is) */}
           <UIComponentsPreview ds={designSystem} />
 
-          {/* ⑧ Templates */}
+          {/* ⑧ Templates — Section 08 (keep as-is) */}
           <div className="border-b-2 border-[#0a0a0a]">
             <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
               <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
                 08
               </span>
               <div className="relative">
-                <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Preview</p>
+                <p className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Preview</p>
                 <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
                   UI<br />Templates
                 </h2>
-                <p className="font-mono text-[9px] text-[#888] mt-6">
+                <p className="font-mono text-[12px] text-[#888] mt-6">
                   See your palette applied to real UI layouts
                 </p>
               </div>
@@ -228,17 +281,12 @@ export default function Home() {
             <TemplateSelector colors={templateColors} />
           </div>
 
-          {/* Figma export modal */}
-          {figmaModalOpen && (
-            <FigmaExportModal ds={designSystem} onClose={() => setFigmaModalOpen(false)} />
-          )}
-
           {/* Footer */}
           <footer className="px-8 md:px-12 py-8 flex items-center justify-between border-t border-[#e8e8e4]">
-            <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
+            <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb]">
               Design System Generator
             </p>
-            <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
+            <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb]">
               Janvi Guliyan · {new Date().getFullYear()}
             </p>
           </footer>

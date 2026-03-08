@@ -35,10 +35,10 @@ export default function SemanticColors({ semantic }: Props) {
   return (
     <div>
       <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-        <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">
           Semantic Colors
         </p>
-        <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#ccc]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#ccc]">
           Harmonized with palette
         </p>
       </div>
@@ -46,11 +46,11 @@ export default function SemanticColors({ semantic }: Props) {
       {/* Step labels */}
       <div className="border-b border-[#e8e8e4] flex">
         <div className="w-24 shrink-0 px-4 py-2 border-r border-[#e8e8e4]">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">Color</span>
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">Color</span>
         </div>
         {SCALE_STEPS.map((step) => (
           <div key={step} className="flex-1 px-1 py-2 text-center">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">{step}</span>
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{step}</span>
           </div>
         ))}
       </div>
@@ -60,8 +60,8 @@ export default function SemanticColors({ semantic }: Props) {
         return (
           <div key={key} className="border-b border-[#e8e8e4] last:border-b-0 flex items-stretch">
             <div className="w-24 shrink-0 border-r border-[#e8e8e4] px-4 py-3 flex flex-col justify-between">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[#888]">{label}</span>
-              <span className="font-mono text-[8px] text-[#bbb]">{hint}</span>
+              <span className="font-mono text-[12px] uppercase tracking-widest text-[#888]">{label}</span>
+              <span className="font-mono text-[12px] text-[#bbb]">{hint}</span>
             </div>
             <div className="flex flex-1">
               {SCALE_STEPS.map((step, i) => {
@@ -94,7 +94,7 @@ export default function SemanticColors({ semantic }: Props) {
                       )}
                     </div>
                     <div className="w-full px-1 py-1">
-                      <span className="font-mono text-[8px] block" style={{ color: contrast, opacity: 0.65 }}>
+                      <span className="font-mono text-[12px] block" style={{ color: contrast, opacity: 0.65 }}>
                         {step}
                       </span>
                     </div>

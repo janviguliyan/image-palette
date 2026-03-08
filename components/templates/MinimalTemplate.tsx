@@ -36,7 +36,7 @@ export default function MinimalTemplate({ colors }: Props) {
         {/* Left: text */}
         <div className="col-span-12 lg:col-span-7 px-10 py-14 flex flex-col justify-center">
           <div
-            className="inline-flex items-center gap-2 mb-6 text-[11px] font-medium px-3 py-1 w-fit"
+            className="inline-flex items-center gap-2 mb-6 text-[12px] font-medium px-3 py-1 w-fit"
             style={{ backgroundColor: hexToRgba(c1, 0.1), color: c1 }}
           >
             <div className="w-1.5 h-1.5" style={{ backgroundColor: c1 }} />
@@ -73,7 +73,7 @@ export default function MinimalTemplate({ colors }: Props) {
               style={{ backgroundColor: lighten(c, 0.82), minHeight: "80px" }}
             >
               <div className="w-full h-full flex items-end p-3">
-                <span className="font-mono text-[9px] text-gray-400">{c}</span>
+                <span className="font-mono text-[12px] text-gray-400">{c}</span>
               </div>
             </div>
           ))}
@@ -83,8 +83,8 @@ export default function MinimalTemplate({ colors }: Props) {
       {/* Work cards */}
       <section className="px-10 pb-10 border-t border-[#f0f0f0]">
         <div className="pt-8 mb-5 flex items-end justify-between">
-          <p className="font-bold text-[11px] uppercase tracking-widest text-gray-400">Selected Work</p>
-          <a className="text-[11px] text-gray-400 hover:text-gray-800 cursor-pointer" style={{ color: c0 }}>View all →</a>
+          <p className="font-bold text-[12px] uppercase tracking-widest text-gray-400">Selected Work</p>
+          <a className="text-[12px] text-gray-400 hover:text-gray-800 cursor-pointer" style={{ color: c0 }}>View all →</a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
@@ -100,7 +100,7 @@ export default function MinimalTemplate({ colors }: Props) {
                 <div className="w-8 h-8" style={{ backgroundColor: color }} />
               </div>
               <p className="text-[12px] font-semibold text-gray-900">{label}</p>
-              <p className="text-[11px] text-gray-400">{sub}</p>
+              <p className="text-[12px] text-gray-400">{sub}</p>
             </div>
           ))}
         </div>

@@ -23,7 +23,7 @@ export default function BrutalistTemplate({ colors }: Props) {
           {["Work", "Studio", "Lab", "Press"].map((item, i) => (
             <a
               key={item}
-              className="px-4 flex items-center font-black text-[10px] uppercase tracking-[0.2em] border-r-4 border-black cursor-pointer last:border-r-0 transition-colors hover:bg-black hover:text-white"
+              className="px-4 flex items-center font-black text-[12px] uppercase tracking-[0.2em] border-r-4 border-black cursor-pointer last:border-r-0 transition-colors hover:bg-black hover:text-white"
               style={i === 0 ? { backgroundColor: c0, color: getContrastColor(c0) } : {}}
             >
               {item}
@@ -32,7 +32,7 @@ export default function BrutalistTemplate({ colors }: Props) {
         </nav>
         <div className="col-span-3 flex items-center justify-end px-4">
           <button
-            className="font-black text-[10px] uppercase tracking-[0.2em] border-4 border-black px-3 py-2 transition-all hover:-translate-y-0.5"
+            className="font-black text-[12px] uppercase tracking-[0.2em] border-4 border-black px-3 py-2 transition-all hover:-translate-y-0.5"
             style={{ backgroundColor: c1, color: getContrastColor(c1) }}
           >
             Let's Talk
@@ -47,7 +47,7 @@ export default function BrutalistTemplate({ colors }: Props) {
           className="col-span-12 lg:col-span-7 border-b-4 lg:border-b-0 lg:border-r-4 border-black px-8 py-8 flex flex-col justify-between"
           style={{ backgroundColor: c0 }}
         >
-          <div className="font-mono text-[9px] uppercase tracking-[0.3em]" style={{ color: getContrastColor(c0), opacity: 0.6 }}>
+          <div className="font-mono text-[12px] uppercase tracking-[0.3em]" style={{ color: getContrastColor(c0), opacity: 0.6 }}>
             Est. 2019 — Independent
           </div>
           <div>
@@ -71,7 +71,7 @@ export default function BrutalistTemplate({ colors }: Props) {
         <div className="col-span-12 lg:col-span-5 grid grid-rows-2">
           {/* Manifesto */}
           <div className="border-b-4 border-black px-6 py-5">
-            <p className="font-black text-[11px] uppercase tracking-widest text-black leading-relaxed">
+            <p className="font-black text-[12px] uppercase tracking-widest text-black leading-relaxed">
               No templates. No shortcuts. Every pixel deliberate. Every choice defended.
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function BrutalistTemplate({ colors }: Props) {
                 style={{ backgroundColor: i === 2 ? "black" : "white" }}
               >
                 <span className={`font-black text-3xl ${i === 2 ? "text-white" : "text-black"}`}>{n}</span>
-                <span className={`font-mono text-[8px] uppercase tracking-[0.3em] mt-0.5 ${i === 2 ? "text-white opacity-50" : "text-black opacity-40"}`}>{l}</span>
+                <span className={`font-mono text-[12px] uppercase tracking-[0.3em] mt-0.5 ${i === 2 ? "text-white opacity-50" : "text-black opacity-40"}`}>{l}</span>
               </div>
             ))}
           </div>
@@ -109,7 +109,7 @@ export default function BrutalistTemplate({ colors }: Props) {
             style={{ backgroundColor: color }}
           >
             <div
-              className="font-black text-[10px] uppercase tracking-[0.3em] mb-1"
+              className="font-black text-[12px] uppercase tracking-[0.3em] mb-1"
               style={{ color: getContrastColor(color) }}
             >
               0{i + 1}
@@ -135,7 +135,7 @@ export default function BrutalistTemplate({ colors }: Props) {
         {["BOLD", "REAL", "BRUTAL", "SHARP", "LOUD", "TRUE", "RAW"].map((word, i) => (
           <span
             key={i}
-            className="font-black text-[10px] uppercase tracking-[0.4em] whitespace-nowrap flex-shrink-0"
+            className="font-black text-[12px] uppercase tracking-[0.4em] whitespace-nowrap flex-shrink-0"
             style={{ color: colors[i % colors.length] }}
           >
             {word} /
@@ -148,14 +148,14 @@ export default function BrutalistTemplate({ colors }: Props) {
         <div
           className="col-span-12 lg:col-span-8 border-r-0 lg:border-r-4 border-black px-8 py-7"
         >
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-gray-400 mb-2">Featured Work</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-gray-400 mb-2">Featured Work</p>
           <p className="font-black text-2xl uppercase tracking-tight">Manifesto — Brand Identity 2024</p>
         </div>
         <div
           className="col-span-12 lg:col-span-4 flex items-center justify-center py-6"
           style={{ backgroundColor: c0 }}
         >
-          <span className="font-black text-[10px] uppercase tracking-[0.3em]" style={{ color: getContrastColor(c0) }}>
+          <span className="font-black text-[12px] uppercase tracking-[0.3em]" style={{ color: getContrastColor(c0) }}>
             View Project →
           </span>
         </div>

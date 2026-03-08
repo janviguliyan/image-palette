@@ -83,7 +83,7 @@ export default function ImageUploader({ onUpload }: Props) {
           <p className="font-black text-[clamp(1.4rem,4vw,2.8rem)] uppercase leading-none tracking-tighter text-[#0a0a0a] mb-3">
             {isDragging ? "Release to Upload" : "Drop Image Here"}
           </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#aaa]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.25em] text-[#aaa]">
             or click anywhere to browse
           </p>
         </div>
@@ -92,12 +92,12 @@ export default function ImageUploader({ onUpload }: Props) {
         <div className="flex items-center gap-6">
           {["JPG", "PNG", "WEBP", "GIF", "AVIF"].map((fmt, i) => (
             <span key={fmt} className="flex items-center gap-6">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#bbb]">{fmt}</span>
+              <span className="font-mono text-[12px] uppercase tracking-widest text-[#bbb]">{fmt}</span>
               {i < 4 && <span className="w-px h-3 bg-[#ddd]" />}
             </span>
           ))}
           <span className="w-px h-3 bg-[#ddd]" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#bbb]">Max 10 MB</span>
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#bbb]">Max 10 MB</span>
         </div>
       </div>
 

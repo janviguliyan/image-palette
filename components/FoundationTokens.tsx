@@ -34,11 +34,11 @@ export default function FoundationTokens({ ds }: Props) {
           06
         </span>
         <div className="relative">
-          <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Foundation</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Foundation</p>
           <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
             Spacing,<br />Radius &<br />Shadows
           </h2>
-          <p className="font-mono text-[9px] text-[#888] mt-6">
+          <p className="font-mono text-[12px] text-[#888] mt-6">
             Design tokens for layout, shape, and elevation
           </p>
         </div>
@@ -47,8 +47,8 @@ export default function FoundationTokens({ ds }: Props) {
       {/* ── Spacing ── */}
       <div className="border-b border-[#e8e8e4]">
         <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">Spacing Scale</p>
-          <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">{SPACING_SCALE.length} steps · 0.125rem → 8rem</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">Spacing Scale</p>
+          <p className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{SPACING_SCALE.length} steps · 0.125rem → 8rem</p>
         </div>
 
         <div className="px-8 md:px-12 py-8 space-y-2">
@@ -62,7 +62,7 @@ export default function FoundationTokens({ ds }: Props) {
                 className="w-full flex items-center gap-5 group text-left"
               >
                 {/* Name */}
-                <span className="font-mono text-[9px] text-[#888] w-6 shrink-0 text-right">{s.name}</span>
+                <span className="font-mono text-[12px] text-[#888] w-6 shrink-0 text-right">{s.name}</span>
 
                 {/* Bar */}
                 <div className="flex-1 flex items-center gap-3">
@@ -79,13 +79,13 @@ export default function FoundationTokens({ ds }: Props) {
                 {/* Values */}
                 <div className="flex items-center gap-4 shrink-0">
                   <span
-                    className="font-mono text-[8px] w-14 text-right transition-colors"
+                    className="font-mono text-[12px] w-14 text-right transition-colors"
                     style={{ color: isCopied ? "#16a34a" : "#bbb" }}
                   >
                     {isCopied ? "✓" : `${s.px}px`}
                   </span>
-                  <span className="font-mono text-[8px] text-[#aaa] w-16 text-right hidden sm:block">{s.value}</span>
-                  <span className="font-mono text-[8px] text-[#ddd] w-28 text-right hidden md:block">{s.token}</span>
+                  <span className="font-mono text-[12px] text-[#aaa] w-16 text-right hidden sm:block">{s.value}</span>
+                  <span className="font-mono text-[12px] text-[#ddd] w-28 text-right hidden md:block">{s.token}</span>
                 </div>
               </button>
             );
@@ -96,8 +96,8 @@ export default function FoundationTokens({ ds }: Props) {
       {/* ── Border Radius ── */}
       <div className="border-b border-[#e8e8e4]">
         <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">Border Radius</p>
-          <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">{RADIUS_SCALE.length} steps · 0px → pill</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">Border Radius</p>
+          <p className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{RADIUS_SCALE.length} steps · 0px → pill</p>
         </div>
 
         <div className="px-8 md:px-12 py-8 grid grid-cols-4 sm:grid-cols-8 gap-4">
@@ -120,12 +120,12 @@ export default function FoundationTokens({ ds }: Props) {
                 />
                 <div className="text-center">
                   <p
-                    className="font-mono text-[8px] uppercase tracking-widest leading-none transition-colors"
+                    className="font-mono text-[12px] uppercase tracking-widest leading-none transition-colors"
                     style={{ color: isCopied ? "#16a34a" : "#888" }}
                   >
                     {isCopied ? "✓" : r.name}
                   </p>
-                  <p className="font-mono text-[7px] text-[#ccc] mt-0.5">{r.value}</p>
+                  <p className="font-mono text-[12px] text-[#ccc] mt-0.5">{r.value}</p>
                 </div>
               </button>
             );
@@ -136,8 +136,8 @@ export default function FoundationTokens({ ds }: Props) {
       {/* ── Shadows ── */}
       <div>
         <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">Elevation Shadows</p>
-          <p className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">{SHADOW_SCALE.length} levels</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">Elevation Shadows</p>
+          <p className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{SHADOW_SCALE.length} levels</p>
         </div>
 
         <div className="px-8 md:px-12 py-10 bg-[#f0f0ec]">
@@ -157,12 +157,12 @@ export default function FoundationTokens({ ds }: Props) {
                   />
                   <div>
                     <p
-                      className="font-mono text-[8px] uppercase tracking-widest leading-none transition-colors"
+                      className="font-mono text-[12px] uppercase tracking-widest leading-none transition-colors"
                       style={{ color: isCopied ? "#16a34a" : "#555" }}
                     >
                       {isCopied ? "✓ Copied" : s.name}
                     </p>
-                    <p className="font-mono text-[7px] text-[#999] mt-0.5 leading-relaxed">{s.usage}</p>
+                    <p className="font-mono text-[12px] text-[#999] mt-0.5 leading-relaxed">{s.usage}</p>
                   </div>
                 </button>
               );

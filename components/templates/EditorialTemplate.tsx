@@ -20,7 +20,7 @@ export default function EditorialTemplate({ colors }: Props) {
         style={{ backgroundColor: c0, borderColor: "transparent" }}
       >
         <p
-          className="text-[9px] font-bold tracking-[0.35em] uppercase"
+          className="text-[12px] font-bold tracking-[0.35em] uppercase"
           style={{ fontFamily: "'Inter', sans-serif", color: getContrastColor(c0) }}
         >
           Spring 2025 — Issue XII
@@ -29,7 +29,7 @@ export default function EditorialTemplate({ colors }: Props) {
           {["Subscribe", "Archive"].map((item) => (
             <a
               key={item}
-              className="text-[9px] font-bold tracking-[0.2em] uppercase cursor-pointer"
+              className="text-[12px] font-bold tracking-[0.2em] uppercase cursor-pointer"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 color: getContrastColor(c0),
@@ -56,7 +56,7 @@ export default function EditorialTemplate({ colors }: Props) {
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           <div className="h-px w-10 bg-gray-300" />
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gray-400">
+          <p className="text-[12px] tracking-[0.4em] uppercase text-gray-400">
             Design & Culture
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function EditorialTemplate({ colors }: Props) {
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-2 h-2 rotate-45" style={{ backgroundColor: c2 }} />
             <span
-              className="text-[9px] font-bold tracking-[0.35em] uppercase"
+              className="text-[12px] font-bold tracking-[0.35em] uppercase"
               style={{ fontFamily: "'Inter', sans-serif", color: c2 }}
             >
               Cover Story
@@ -104,7 +104,7 @@ export default function EditorialTemplate({ colors }: Props) {
               "Color is the first thing you feel,<br />and the last thing you forget."
             </p>
             <cite
-              className="text-[10px] text-gray-400 mt-2 block not-italic"
+              className="text-[12px] text-gray-400 mt-2 block not-italic"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               — Iris Tanaka, Creative Director
@@ -121,7 +121,7 @@ export default function EditorialTemplate({ colors }: Props) {
           {/* Color reference row */}
           <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
             <p
-              className="text-[9px] uppercase tracking-widest text-gray-400 mr-2"
+              className="text-[12px] uppercase tracking-widest text-gray-400 mr-2"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Palette
@@ -133,7 +133,7 @@ export default function EditorialTemplate({ colors }: Props) {
                   style={{ backgroundColor: c }}
                 />
                 <span
-                  className="text-[8px] font-mono text-gray-300"
+                  className="text-[12px] font-mono text-gray-300"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {c.slice(1).toUpperCase()}
@@ -148,7 +148,7 @@ export default function EditorialTemplate({ colors }: Props) {
           {/* Story 2 */}
           <div className="px-6 py-6 border-b border-gray-200">
             <span
-              className="text-[8px] font-bold tracking-[0.35em] uppercase block mb-2"
+              className="text-[12px] font-bold tracking-[0.35em] uppercase block mb-2"
               style={{ fontFamily: "'Inter', sans-serif", color: c3 }}
             >
               Perspective
@@ -158,7 +158,7 @@ export default function EditorialTemplate({ colors }: Props) {
               <em>Is Beautiful</em>
             </h3>
             <p
-              className="text-[11px] text-gray-500 leading-relaxed"
+              className="text-[12px] text-gray-500 leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               The raw, unfinished aesthetic is having a moment — more refined than it appears.
@@ -168,7 +168,7 @@ export default function EditorialTemplate({ colors }: Props) {
           {/* Story 3 */}
           <div className="px-6 py-6 border-b border-gray-200">
             <span
-              className="text-[8px] font-bold tracking-[0.35em] uppercase block mb-2"
+              className="text-[12px] font-bold tracking-[0.35em] uppercase block mb-2"
               style={{ fontFamily: "'Inter', sans-serif", color: c4 }}
             >
               In Practice
@@ -178,7 +178,7 @@ export default function EditorialTemplate({ colors }: Props) {
               <em>Break Rules</em>
             </h3>
             <p
-              className="text-[11px] text-gray-500 leading-relaxed"
+              className="text-[12px] text-gray-500 leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Five studios doing layout work that makes Swiss modernism look cautious.
@@ -197,7 +197,7 @@ export default function EditorialTemplate({ colors }: Props) {
               Subscribe
             </p>
             <p
-              className="text-[10px] mb-4 opacity-65"
+              className="text-[12px] mb-4 opacity-65"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 color: getContrastColor(c5),
@@ -206,7 +206,7 @@ export default function EditorialTemplate({ colors }: Props) {
               Six issues per year. No filler.
             </p>
             <button
-              className="w-full py-2.5 text-[10px] font-bold transition-opacity hover:opacity-90"
+              className="w-full py-2.5 text-[12px] font-bold transition-opacity hover:opacity-90"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 backgroundColor: getContrastColor(c5),

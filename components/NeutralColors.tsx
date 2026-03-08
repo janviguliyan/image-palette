@@ -26,10 +26,10 @@ export default function NeutralColors({ neutral, temperature }: Props) {
   return (
     <div className="border-b border-[#e8e8e4]">
       <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3 flex items-center justify-between">
-        <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">
           Neutral Greys
         </p>
-        <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#ccc]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#ccc]">
           {tempLabel} — palette-matched
         </p>
       </div>
@@ -37,11 +37,11 @@ export default function NeutralColors({ neutral, temperature }: Props) {
       {/* Step labels */}
       <div className="border-b border-[#e8e8e4] flex">
         <div className="w-24 shrink-0 px-4 py-2 border-r border-[#e8e8e4]">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">Gray</span>
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">Gray</span>
         </div>
         {SCALE_STEPS.map((step) => (
           <div key={step} className="flex-1 px-1 py-2 text-center">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-[#ccc]">{step}</span>
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{step}</span>
           </div>
         ))}
       </div>
@@ -49,7 +49,7 @@ export default function NeutralColors({ neutral, temperature }: Props) {
       {/* Swatch row */}
       <div className="flex items-stretch">
         <div className="w-24 shrink-0 border-r border-[#e8e8e4] px-4 py-3 flex items-center">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#888]">Gray</span>
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#888]">Gray</span>
         </div>
         <div className="flex flex-1">
           {SCALE_STEPS.map((step, i) => {
@@ -82,7 +82,7 @@ export default function NeutralColors({ neutral, temperature }: Props) {
                   )}
                 </div>
                 <div className="w-full px-1 py-1">
-                  <span className="font-mono text-[8px] block" style={{ color: contrast, opacity: 0.65 }}>
+                  <span className="font-mono text-[12px] block" style={{ color: contrast, opacity: 0.65 }}>
                     {step}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export default function NeutralColors({ neutral, temperature }: Props) {
               i < SCALE_STEPS.length - 1 ? "border-r border-[#e8e8e4]" : ""
             }`}
           >
-            <span className="font-mono text-[8px] text-[#aaa] block truncate">
+            <span className="font-mono text-[12px] text-[#aaa] block truncate">
               {copied === neutral[step] ? "Copied!" : neutral[step]}
             </span>
           </button>

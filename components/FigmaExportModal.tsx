@@ -46,7 +46,21 @@ function parseShadowCss(css: string) {
 
 // ── Build all DS data in TypeScript → embed as JSON in script ─────────────────
 
-function buildDS(ds: DesignSystem) {
+function buildFontsToLoad(primaryFont: string, secondaryFont: string) {
+  const styles = ["Black", "ExtraBold", "Bold", "SemiBold", "Medium", "Regular"];
+  const fonts: { family: string; style: string }[] = [];
+  const seen = new Set<string>();
+  const add = (family: string, style: string) => {
+    const key = `${family}/${style}`;
+    if (!seen.has(key)) { seen.add(key); fonts.push({ family, style }); }
+  };
+  for (const s of styles) add(primaryFont, s);
+  if (secondaryFont !== primaryFont) for (const s of styles) add(secondaryFont, s);
+  add("JetBrains Mono", "Regular");
+  return fonts;
+}
+
+function buildDS(ds: DesignSystem, primaryFont = "Inter", secondaryFont = "Roboto") {
   const { scales, neutral, semantic } = ds;
 
   // Colors (hex strings — converted to RGB inside Figma)
@@ -63,13 +77,14 @@ function buildDS(ds: DesignSystem) {
       colors[`${g}/${step}`] = hex as string;
 
   // Typography (fully pre-processed — no parsing needed in Figma)
+  const HEADING_NAMES = new Set(["Display", "H1", "H2", "H3", "H4"]);
   const typography = TYPOGRAPHY_SCALE.map(t => {
     const style =
       t.family === "mono" ? "Regular" :
       t.weight >= 900 ? "Black" : t.weight >= 800 ? "ExtraBold" :
       t.weight >= 700 ? "Bold"  : t.weight >= 600 ? "SemiBold"  :
       t.weight >= 500 ? "Medium" : "Regular";
-    const family = t.family === "mono" ? "JetBrains Mono" : "Inter";
+    const family = t.family === "mono" ? "JetBrains Mono" : HEADING_NAMES.has(t.name) ? primaryFont : secondaryFont;
     const sizePx = t.sizeDesktop.includes("clamp")
       ? (t.name === "Display" ? 60 : t.name === "H1" ? 48 : t.name === "H2" ? 36 : t.name === "H3" ? 28 : 24)
       : Math.round(parseFloat(t.sizeDesktop) * 16);
@@ -185,6 +200,9 @@ function buildDS(ds: DesignSystem) {
       pageBg:    { r: 0.97, g: 0.97, b: 0.97 },
     },
     components: { buttons, badges, alerts },
+    pFont: primaryFont,
+    sFont: secondaryFont,
+    fontsToLoad: buildFontsToLoad(primaryFont, secondaryFont),
   };
 }
 
@@ -192,8 +210,8 @@ function buildDS(ds: DesignSystem) {
 // All data is JSON-embedded. The generated JS is 100% static — no regex, no
 // template literals, no nested string building. This is why it won't throw.
 
-function buildFigmaPluginScript(ds: DesignSystem): string {
-  const data = buildDS(ds);
+export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", secondaryFont = "Roboto"): string {
+  const data = buildDS(ds, primaryFont, secondaryFont);
   const json = JSON.stringify(data);
 
   // Static JS body — uses only var, single-quotes, no backticks, no ${...}
@@ -221,12 +239,7 @@ function buildFigmaPluginScript(ds: DesignSystem): string {
     "console.log('Paint styles:', Object.keys(DS.colors).length);",
     "",
     "// ── 2. Load Fonts ─────────────────────────────────────────────────────────",
-    "var FONTS = [",
-    "  {family:'Inter',style:'Black'},{family:'Inter',style:'ExtraBold'},",
-    "  {family:'Inter',style:'Bold'},{family:'Inter',style:'SemiBold'},",
-    "  {family:'Inter',style:'Medium'},{family:'Inter',style:'Regular'},",
-    "  {family:'JetBrains Mono',style:'Regular'}",
-    "];",
+    "var FONTS = DS.fontsToLoad;",
     "var loaded = {};",
     "for (var fi = 0; fi < FONTS.length; fi++) {",
     "  try { await figma.loadFontAsync(FONTS[fi]); loaded[FONTS[fi].family+'/'+FONTS[fi].style]=1; }",
@@ -444,7 +457,7 @@ function buildFigmaPluginScript(ds: DesignSystem): string {
     "  bc.opacity = bd.disabled ? 0.4 : 1;",
     "  var blabel = bd.name.split(',')[0].split('=')[1] || 'Btn';",
     "  var bt = figma.createText();",
-    "  bt.fontName = fn('Inter','SemiBold'); bt.fontSize = bd.fs;",
+    "  bt.fontName = fn(DS.sFont,'SemiBold'); bt.fontSize = bd.fs;",
     "  bt.characters = blabel; bt.fills = [{type:'SOLID',color:bd.text}];",
     "  bc.appendChild(bt);",
     "  bc.x = btnBx + (bi % 6) * 140;",
@@ -478,7 +491,7 @@ function buildFigmaPluginScript(ds: DesignSystem): string {
     "  if (bdd.border) { bdc.strokes=[{type:'SOLID',color:bdd.border}]; bdc.strokeWeight=1.5; bdc.strokeAlign='INSIDE'; }",
     "  var bdlabel = bdd.name.split(',')[0].split('=')[1] || 'Badge';",
     "  var bdt = figma.createText();",
-    "  bdt.fontName = fn('Inter','SemiBold'); bdt.fontSize = 10;",
+    "  bdt.fontName = fn(DS.sFont,'SemiBold'); bdt.fontSize = 10;",
     "  bdt.characters = bdlabel.toUpperCase();",
     "  bdt.fills = [{type:'SOLID',color:bdd.text}];",
     "  bdt.letterSpacing = {value:5, unit:'PERCENT'};",
@@ -515,12 +528,12 @@ function buildFigmaPluginScript(ds: DesignSystem): string {
     "  alc.strokes = [{type:'SOLID',color:al.border}];",
     "  alc.strokeWeight = 1; alc.strokeAlign = 'INSIDE';",
     "  var altitle = figma.createText();",
-    "  altitle.fontName = fn('Inter','Bold'); altitle.fontSize = 13;",
+    "  altitle.fontName = fn(DS.pFont,'Bold'); altitle.fontSize = 13;",
     "  altitle.characters = al.label;",
     "  altitle.fills = [{type:'SOLID',color:al.text}];",
     "  alc.appendChild(altitle);",
     "  var albody = figma.createText();",
-    "  albody.fontName = fn('Inter','Regular'); albody.fontSize = 12;",
+    "  albody.fontName = fn(DS.sFont,'Regular'); albody.fontSize = 12;",
     "  albody.characters = 'This is a '+al.label.toLowerCase()+' alert. Review and take action.';",
     "  albody.fills = [{type:'SOLID',color:al.text}];",
     "  alc.appendChild(albody);",
@@ -609,18 +622,18 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
         {/* Header */}
         <div className="border-b-2 border-[#0a0a0a] px-8 py-5 flex items-start justify-between gap-4 shrink-0">
           <div>
-            <p className="font-mono text-[7px] uppercase tracking-[0.5em] text-[#aaa] mb-1.5">Export</p>
+            <p className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa] mb-1.5">Export</p>
             <h2 className="font-black text-xl uppercase leading-none tracking-tighter text-[#0a0a0a]">Open in Figma</h2>
-            <p className="font-mono text-[8px] text-[#888] mt-2">
+            <p className="font-mono text-[12px] text-[#888] mt-2">
               Plugin script · Run in Figma Desktop console
             </p>
           </div>
-          <button onClick={onClose} className="font-mono text-[9px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors mt-0.5 shrink-0">✕</button>
+          <button onClick={onClose} className="font-mono text-[12px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors mt-0.5 shrink-0">✕</button>
         </div>
 
         {/* What it creates */}
         <div className="border-b border-[#e8e8e4] px-8 py-4 shrink-0">
-          <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa] mb-3">What gets created</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">What gets created</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
             {[
               `${Object.keys(buildDS(ds).colors).length} paint styles  (colors)`,
@@ -634,7 +647,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <span style={{ width: 5, height: 5, borderRadius: 9999, background: accent, display: "inline-block", flexShrink: 0 }} />
-                <span className="font-mono text-[8px] text-[#555]">{item}</span>
+                <span className="font-mono text-[12px] text-[#555]">{item}</span>
               </div>
             ))}
           </div>
@@ -642,7 +655,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Steps */}
         <div className="border-b border-[#e8e8e4] px-8 py-4 shrink-0">
-          <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa] mb-3">Steps</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">Steps</p>
           <div className="space-y-1.5">
             {[
               "Open Figma Desktop (browser won't work)",
@@ -651,10 +664,10 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
               "A 'Design System' page appears with everything",
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="font-mono text-[8px] font-black shrink-0" style={{ color: accent }}>
+                <span className="font-mono text-[12px] font-black shrink-0" style={{ color: accent }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="font-mono text-[8px] text-[#555] leading-relaxed">{step}</span>
+                <span className="font-mono text-[12px] text-[#555] leading-relaxed">{step}</span>
               </div>
             ))}
           </div>
@@ -662,10 +675,10 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Script */}
         <div className="border-b border-[#e8e8e4] px-8 py-3 flex items-center justify-between shrink-0">
-          <span className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa]">Script</span>
+          <span className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa]">Script</span>
           <button
             onClick={copy}
-            className="font-mono text-[8px] uppercase tracking-widest px-4 py-1.5 transition-colors"
+            className="font-mono text-[12px] uppercase tracking-widest px-4 py-1.5 transition-colors"
             style={{ background: copied ? "#16a34a" : accent, color: "#fff", border: "none", borderRadius: 3 }}
           >
             {copied ? "✓ Copied!" : "Copy Script"}
@@ -688,7 +701,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Footer */}
         <div className="border-t border-[#e8e8e4] px-8 py-3 shrink-0">
-          <p className="font-mono text-[7px] text-[#ccc]">
+          <p className="font-mono text-[12px] text-[#ccc]">
             Requires Figma Desktop · Inter & JetBrains Mono fonts must be installed in Figma
           </p>
         </div>

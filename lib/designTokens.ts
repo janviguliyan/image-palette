@@ -96,15 +96,36 @@ export const SHADOW_SCALE: ShadowToken[] = [
   { name: "Inner", token: "--shadow-inner", value: "inset 0 2px 4px 0 rgba(0,0,0,0.06)",                                       usage: "Inset inputs, pressed states",          tailwind: "inner" },
 ];
 
+// ── Shared override types (used by TypographySystem + ExportTriggers) ─────────
+
+export type EditableField = "sizeDesktop" | "weight" | "lineHeight" | "letterSpacing" | "textCase";
+
+export type OverrideMap = {
+  [token: string]: Partial<Pick<TypographyToken, EditableField>>;
+};
+
 // ── Export build functions ────────────────────────────────────────────────────
 
-export function buildTypographyCss(): string {
+export function buildTypographyCss(
+  primaryFont = "Inter",
+  secondaryFont = "Roboto",
+  overrides: OverrideMap = {}
+): string {
   const lines: string[] = ["\n  /* ─── Typography ─────────────────────────────────── */"];
+  lines.push(`  --font-primary: '${primaryFont}', sans-serif;`);
+  lines.push(`  --font-secondary: '${secondaryFont}', sans-serif;`);
+  lines.push(`  --font-mono: 'JetBrains Mono', monospace;`);
   for (const t of TYPOGRAPHY_SCALE) {
-    lines.push(`  ${t.token}: ${t.sizeDesktop};`);
-    lines.push(`  ${t.token}-weight: ${t.weight};`);
-    lines.push(`  ${t.token}-leading: ${t.lineHeight};`);
-    lines.push(`  ${t.token}-tracking: ${t.letterSpacing};`);
+    const ov = overrides[t.token] ?? {};
+    const size    = (ov.sizeDesktop as string)  ?? t.sizeDesktop;
+    const weight  = (ov.weight as number)        ?? t.weight;
+    const leading = (ov.lineHeight as string)    ?? t.lineHeight;
+    const tracking = (ov.letterSpacing as string) ?? t.letterSpacing;
+    lines.push(`  ${t.token}: ${size};`);
+    lines.push(`  ${t.token}-mobile: ${t.sizeMobile};`);
+    lines.push(`  ${t.token}-weight: ${weight};`);
+    lines.push(`  ${t.token}-leading: ${leading};`);
+    lines.push(`  ${t.token}-tracking: ${tracking};`);
   }
   return lines.join("\n");
 }
@@ -127,12 +148,27 @@ export function buildShadowCss(): string {
   return lines.join("\n");
 }
 
-export function buildTypographyTailwind(): string {
+export function buildTypographyTailwind(
+  primaryFont = "Inter",
+  secondaryFont = "Roboto",
+  overrides: OverrideMap = {}
+): string {
   const lines: string[] = ["\n  // Typography"];
+  lines.push("  fontFamily: {");
+  lines.push(`    primary: ["'${primaryFont}'", "sans-serif"],`);
+  lines.push(`    secondary: ["'${secondaryFont}'", "sans-serif"],`);
+  lines.push(`    mono: ["'JetBrains Mono'", "monospace"],`);
+  lines.push("  },");
   lines.push("  fontSize: {");
   for (const t of TYPOGRAPHY_SCALE) {
+    const ov  = overrides[t.token] ?? {};
     const key = t.name.toLowerCase().replace(/\s+/g, "-");
-    lines.push(`    "${key}": ["${t.sizeDesktop}", { lineHeight: "${t.lineHeight}", letterSpacing: "${t.letterSpacing}", fontWeight: "${t.weight}" }],`);
+    const size    = (ov.sizeDesktop as string) ?? t.sizeDesktop;
+    const leading = (ov.lineHeight  as string) ?? t.lineHeight;
+    const tracking = (ov.letterSpacing as string) ?? t.letterSpacing;
+    const weight   = (ov.weight as number)     ?? t.weight;
+    lines.push(`    "${key}": ["${size}", { lineHeight: "${leading}", letterSpacing: "${tracking}", fontWeight: "${weight}" }],`);
+    lines.push(`    "${key}-mobile": ["${t.sizeMobile}", { lineHeight: "${leading}", letterSpacing: "${tracking}", fontWeight: "${weight}" }],`);
   }
   lines.push("  },");
   return lines.join("\n");
@@ -162,14 +198,28 @@ export function buildShadowTailwind(): string {
   return lines.join("\n");
 }
 
-export function buildFoundationFigmaTokens(): Record<string, string> {
+export function buildFoundationFigmaTokens(
+  primaryFont = "Inter",
+  secondaryFont = "Roboto",
+  overrides: OverrideMap = {}
+): Record<string, string> {
   const tokens: Record<string, string> = {};
+  tokens["font.primary"]   = `${primaryFont}, sans-serif`;
+  tokens["font.secondary"] = `${secondaryFont}, sans-serif`;
+  tokens["font.mono"]      = "JetBrains Mono, monospace";
   for (const t of TYPOGRAPHY_SCALE) {
+    const ov  = overrides[t.token] ?? {};
     const key = t.name.toLowerCase().replace(/\s+/g, ".");
-    tokens[`typography.${key}.size`]     = t.sizeDesktop;
-    tokens[`typography.${key}.weight`]   = String(t.weight);
-    tokens[`typography.${key}.leading`]  = t.lineHeight;
-    tokens[`typography.${key}.tracking`] = t.letterSpacing;
+    tokens[`typography.${key}.size`]        = (ov.sizeDesktop as string) ?? t.sizeDesktop;
+    tokens[`typography.${key}.size-mobile`] = t.sizeMobile;
+    tokens[`typography.${key}.weight`]      = String((ov.weight as number) ?? t.weight);
+    tokens[`typography.${key}.leading`]     = (ov.lineHeight as string) ?? t.lineHeight;
+    tokens[`typography.${key}.tracking`]    = (ov.letterSpacing as string) ?? t.letterSpacing;
+    tokens[`typography.${key}.family`]      = t.family === "mono"
+      ? "JetBrains Mono, monospace"
+      : ["Display","H1","H2","H3","H4"].includes(t.name)
+        ? `${primaryFont}, sans-serif`
+        : `${secondaryFont}, sans-serif`;
   }
   for (const s of SPACING_SCALE) tokens[`spacing.${s.name}`]    = s.value;
   for (const r of RADIUS_SCALE)  tokens[`radius.${r.tailwind}`] = r.value;

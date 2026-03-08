@@ -180,10 +180,10 @@ export default function TemplateSelector({ colors }: Props) {
     <div className="border-t-2 border-[#0a0a0a]" style={{ backgroundColor: "#0a0a0a" }}>
       {/* Section header */}
       <div className="border-b border-[#222] px-6 sm:px-10 py-4 flex items-center justify-between">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#555]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#555]">
           03 / Template Preview
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#333]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#333]">
           {TEMPLATES.length} designs
         </p>
       </div>
@@ -213,11 +213,11 @@ export default function TemplateSelector({ colors }: Props) {
               {/* Card info */}
               <div className="px-3 py-3 flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-black text-[11px] uppercase tracking-wider text-white">
+                  <span className="font-black text-[12px] uppercase tracking-wider text-white">
                     {t.label}
                   </span>
                   <span
-                    className="font-mono text-[8px] uppercase tracking-widest px-1.5 py-0.5"
+                    className="font-mono text-[12px] uppercase tracking-widest px-1.5 py-0.5"
                     style={{
                       backgroundColor: isActive ? "#fff" : "#222",
                       color: isActive ? "#000" : "#555",
@@ -226,7 +226,7 @@ export default function TemplateSelector({ colors }: Props) {
                     {t.tag}
                   </span>
                 </div>
-                <p className="font-mono text-[9px] text-[#444] leading-relaxed hidden sm:block">
+                <p className="font-mono text-[12px] text-[#444] leading-relaxed hidden sm:block">
                   {t.description}
                 </p>
               </div>
@@ -253,7 +253,7 @@ export default function TemplateSelector({ colors }: Props) {
       >
         {/* Preview label */}
         <div className="px-6 sm:px-10 py-3 flex items-center justify-between border-b border-[#1a1a1a]">
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#444]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#444]">
             {active.label} — Live Preview
           </p>
           <div className="flex gap-1.5">

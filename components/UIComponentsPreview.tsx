@@ -288,7 +288,7 @@ function SubSection({ label, children }: { label: string; children: React.ReactN
   return (
     <div className="border-b border-[#e8e8e4]">
       <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3">
-        <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">{label}</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">{label}</p>
       </div>
       <div className="px-8 md:px-12 py-8">
         {children}
@@ -319,11 +319,11 @@ function ButtonsTable({ ds }: { ds: DesignSystem }) {
         <thead>
           <tr className="border-b border-[#e8e8e4]">
             <th className="text-left pb-3 pr-6" style={{ width: 110 }}>
-              <span className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb]">Variant</span>
+              <span className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb]">Variant</span>
             </th>
             {STATES.map((s) => (
               <th key={s} className="text-left pb-3 px-3">
-                <span className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb]">{s}</span>
+                <span className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb]">{s}</span>
               </th>
             ))}
           </tr>
@@ -332,7 +332,7 @@ function ButtonsTable({ ds }: { ds: DesignSystem }) {
           {ROWS.map(({ label, variant, size }, i) => (
             <tr key={label} className={`${i < ROWS.length - 1 ? "border-b border-[#f0f0ec]" : ""}`}>
               <td className="py-2.5 pr-6">
-                <span className="font-mono text-[8px] text-[#888] uppercase tracking-widest">{label}</span>
+                <span className="font-mono text-[12px] text-[#888] uppercase tracking-widest">{label}</span>
               </td>
               {STATES.map((state) => (
                 <td key={state} className="py-2.5 px-3">
@@ -348,7 +348,7 @@ function ButtonsTable({ ds }: { ds: DesignSystem }) {
           ))}
         </tbody>
       </table>
-      <p className="font-mono text-[7px] text-[#ccc] mt-4">
+      <p className="font-mono text-[12px] text-[#ccc] mt-4">
         Each cell shows: text only · icon right · icon left · icon only
       </p>
     </div>
@@ -393,14 +393,14 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-8 max-w-4xl">
       {/* Text — empty */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Empty</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Empty</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["700"], marginBottom: 6 }}>Email Address</label>
         <input type="email" placeholder="hello@example.com" style={stateInputStyle(false)} readOnly />
       </div>
 
       {/* Text — filled */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Filled</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Filled</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["700"], marginBottom: 6 }}>Email Address</label>
         <input
           type="email"
@@ -414,7 +414,7 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Text — error */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Error</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Error</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["700"], marginBottom: 6 }}>Email Address</label>
         <input type="email" defaultValue="not-an-email" style={stateInputStyle(false, true)} readOnly />
         <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.7rem", color: err["600"], marginTop: 5 }}>Invalid email address</p>
@@ -422,14 +422,14 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Text — disabled */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Disabled</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Text · Disabled</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["400"], marginBottom: 6 }}>Email Address</label>
         <input type="email" disabled placeholder="hello@example.com" style={{ ...stateInputStyle(false), background: g["50"], border: `1.5px solid ${g["100"]}`, color: g["400"], cursor: "not-allowed" }} />
       </div>
 
       {/* Textarea */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Textarea</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Textarea</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["700"], marginBottom: 6 }}>Message</label>
         <textarea
           placeholder="Write your message…"
@@ -450,7 +450,7 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Select */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Select</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Select</p>
         <label style={{ display: "block", fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: g["700"], marginBottom: 6 }}>Role</label>
         <select
           onFocus={() => setSelectFocused(true)}
@@ -471,7 +471,7 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Checkboxes */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Checkbox</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Checkbox</p>
         <div className="flex flex-col gap-3">
           {(["Unchecked", "Checked", "Indeterminate", "Disabled"] as const).map((label) => {
             const isChecked = label === "Checked";
@@ -499,7 +499,7 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Radio */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Radio</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Radio</p>
         <div className="flex flex-col gap-3">
           {(["Option A", "Option B", "Option C"] as const).map((opt, i) => {
             const val = ["a", "b", "c"][i];
@@ -518,7 +518,7 @@ function FormInputs({ ds }: { ds: DesignSystem }) {
 
       {/* Toggle */}
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Toggle</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Toggle</p>
         <div className="flex flex-col gap-3">
           {[false, true].map((on) => (
             <label key={String(on)} onClick={() => setToggled(on)} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
@@ -643,7 +643,7 @@ function Badges({ ds }: { ds: DesignSystem }) {
   return (
     <div className="space-y-6">
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Filled</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Filled</p>
         <div className="flex flex-wrap gap-2">
           {filled.map(({ label, bg, color }) => (
             <span key={label} style={{ ...badgeBase, background: bg, color }}>{label}</span>
@@ -651,7 +651,7 @@ function Badges({ ds }: { ds: DesignSystem }) {
         </div>
       </div>
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Outlined</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Outlined</p>
         <div className="flex flex-wrap gap-2">
           {outlined.map(({ label, color, border }) => (
             <span key={label} style={{ ...badgeBase, background: "transparent", color, border: `1.5px solid ${border}`, padding: "3px 10px" }}>{label}</span>
@@ -659,7 +659,7 @@ function Badges({ ds }: { ds: DesignSystem }) {
         </div>
       </div>
       <div>
-        <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Status dot</p>
+        <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#bbb] mb-3">Status dot</p>
         <div className="flex flex-wrap gap-3">
           {dot.map(({ label, dot: dotColor }) => (
             <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "JetBrains Mono, monospace", fontSize: "0.72rem", color: g["700"] }}>
@@ -710,11 +710,11 @@ export default function UIComponentsPreview({ ds }: Props) {
           07
         </span>
         <div className="relative">
-          <p className="font-mono text-[8px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Starter Kit</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa] mb-5">Starter Kit</p>
           <h2 className="font-black text-[clamp(3rem,6vw,5rem)] uppercase leading-[0.88] tracking-tighter text-[#0a0a0a]">
             UI<br />Components
           </h2>
-          <p className="font-mono text-[9px] text-[#888] mt-6">
+          <p className="font-mono text-[12px] text-[#888] mt-6">
             Buttons · Form · Cards · Badges · Alerts — all states, all sizes, live with your palette
           </p>
         </div>
@@ -739,7 +739,7 @@ export default function UIComponentsPreview({ ds }: Props) {
 
         <div>
           <div className="border-b border-[#e8e8e4] px-8 md:px-12 py-3">
-            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#aaa]">Alerts — Success · Warning · Error · Info</p>
+            <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">Alerts — Success · Warning · Error · Info</p>
           </div>
           <div className="px-8 md:px-12 py-8">
             <Alerts ds={ds} />
