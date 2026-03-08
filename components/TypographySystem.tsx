@@ -4,10 +4,26 @@ import { useState, useRef, useEffect } from "react";
 import { TYPOGRAPHY_SCALE, type TypographyToken, type OverrideMap, type EditableField } from "@/lib/designTokens";
 
 const GOOGLE_FONTS = [
-  "Inter", "Roboto", "Poppins", "Lato", "Montserrat", "Open Sans",
-  "Playfair Display", "Source Sans 3", "Raleway", "Nunito", "Outfit",
-  "DM Sans", "Work Sans", "Space Grotesk", "Sora", "Plus Jakarta Sans",
-];
+  // Sans-serif — Geometric / Humanist
+  "Albert Sans", "Barlow", "Be Vietnam Pro", "Bricolage Grotesque", "Cabin",
+  "Chivo", "DM Sans", "Exo 2", "Figtree", "Geologica", "Hanken Grotesk",
+  "IBM Plex Sans", "Instrument Sans", "Inter", "Josefin Sans", "Jost",
+  "Lato", "Lexend", "Manrope", "Montserrat", "Mulish", "Nunito",
+  "Nunito Sans", "Onest", "Open Sans", "Outfit", "Plus Jakarta Sans",
+  "Poppins", "Quicksand", "Raleway", "Readex Pro", "Red Hat Display",
+  "Roboto", "Rubik", "Sora", "Source Sans 3", "Space Grotesk",
+  "Titillium Web", "Urbanist", "Varela Round", "Work Sans",
+  // Serif
+  "Cormorant Garamond", "Crimson Text", "DM Serif Display", "EB Garamond",
+  "Fraunces", "Instrument Serif", "Libre Baskerville", "Lora",
+  "Merriweather", "Playfair Display", "PT Serif", "Spectral",
+  // Display / Decorative
+  "Caveat", "Dancing Script", "Great Vibes", "Lobster", "Pacifico",
+  "Permanent Marker", "Righteous", "Secular One",
+  // Monospace
+  "Courier Prime", "Fira Code", "IBM Plex Mono", "Roboto Mono",
+  "Source Code Pro", "Space Mono",
+].sort();
 
 type ScreenSize = "desktop" | "tablet" | "mobile";
 
@@ -141,18 +157,30 @@ export default function TypographySystem({
   const [overrides, setOverrides] = useState<OverrideMap>({});
   const [screenSize, setScreenSize] = useState<ScreenSize>("desktop");
 
-  // Dynamically load Google Fonts when selection changes
+  // Track all font links — only clean up on unmount, never remove on font change
+  // (removing the link causes the font to briefly revert to fallback)
+  const fontLinksRef = useRef<HTMLLinkElement[]>([]);
+
   useEffect(() => {
-    const families = [primaryFont, secondaryFont]
+    [primaryFont, secondaryFont]
       .filter((f, i, arr) => arr.indexOf(f) === i) // deduplicate
-      .map((f) => f.replace(/ /g, "+") + ":wght@400;500;600;700;800;900")
-      .join("&family=");
-    const link = document.createElement("link");
-    link.rel  = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
-    document.head.appendChild(link);
-    return () => { document.head.removeChild(link); };
+      .forEach((f) => {
+        const href = `https://fonts.googleapis.com/css2?family=${f.replace(/ /g, "+")}:wght@400;500;600;700;800;900&display=swap`;
+        if (!document.querySelector(`link[href="${href}"]`)) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = href;
+          document.head.appendChild(link);
+          fontLinksRef.current.push(link);
+        }
+      });
   }, [primaryFont, secondaryFont]);
+
+  // Clean up all font links only when the component unmounts
+  useEffect(() => {
+    const links = fontLinksRef.current;
+    return () => { links.forEach((l) => { if (document.head.contains(l)) document.head.removeChild(l); }); };
+  }, []);
 
   const getToken = (t: TypographyToken): TypographyToken => ({
     ...t,
@@ -283,8 +311,8 @@ export default function TypographySystem({
 
           {/* Font Preview */}
           <div
-            className="flex-1 flex flex-col gap-4 p-6 overflow-hidden min-w-0"
-            style={{ backgroundColor: "#2e31ea", color: "#fafafa", minHeight: 180 }}
+            className="flex-1 flex flex-col gap-4 p-6 overflow-hidden min-w-0 border-2 border-black"
+            style={{ backgroundColor: "#f9f9f7", color: "#0a0a0a", minHeight: 180 }}
           >
             <p
               className="font-bold leading-tight"
@@ -294,7 +322,7 @@ export default function TypographySystem({
             </p>
             <p
               className="font-medium text-[16px] leading-relaxed"
-              style={{ fontFamily: `'${secondaryFont}', sans-serif` }}
+              style={{ fontFamily: `'${secondaryFont}', sans-serif`, color: "#444" }}
             >
               {secondaryFont} — Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Viverra dolor vitae imperdiet.

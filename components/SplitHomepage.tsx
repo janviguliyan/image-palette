@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { generateHarmonyColors, normalizeHex, HARMONY_MODES } from "@/lib/colorUtils";
+import { generateHarmonyColors, normalizeHex, HARMONY_MODES, getWcagContrast, getWcagLevel } from "@/lib/colorUtils";
 import type { HarmonyMode } from "@/lib/colorUtils";
 
 export interface ManualRoles {
@@ -29,10 +29,43 @@ function previewColor(v: string) {
   return v && isValidHex(v) ? normalizeHex(v) : "#e8e8e4";
 }
 
-// ── Inline HSV Color Picker ────────────────────────────────────────────────
+// ── Lightness shifter ─────────────────────────────────────────────────────────
 
-const PICKER_W = 240;
-const PICKER_H = 160;
+function shiftLightness(hex: string, delta: number): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let hue = 0, sat = 0;
+  if (max !== min) {
+    const d = max - min;
+    sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) hue = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) hue = (b - r) / d + 2;
+    else hue = (r - g) / d + 4;
+    hue /= 6;
+  }
+  const newL = Math.max(0, Math.min(1, l + delta / 100));
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1; if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const toHex = (x: number) => Math.round(Math.max(0, Math.min(255, x * 255))).toString(16).padStart(2, "0");
+  if (sat === 0) {
+    const v = Math.round(newL * 255).toString(16).padStart(2, "0");
+    return `#${v}${v}${v}`;
+  }
+  const q = newL < 0.5 ? newL * (1 + sat) : newL + sat - newL * sat;
+  const p = 2 * newL - q;
+  return `#${toHex(hue2rgb(p, q, hue + 1 / 3))}${toHex(hue2rgb(p, q, hue))}${toHex(hue2rgb(p, q, hue - 1 / 3))}`;
+}
+
+// ── Inline HSV Color Picker (full-width responsive) ───────────────────────────
 
 function hexToHsv(hex: string): [number, number, number] {
   const h = hex.replace("#", "").padEnd(6, "0");
@@ -69,15 +102,15 @@ function InlineColorPicker({
   onChange: (hex: string) => void;
 }) {
   const safeHex = isValidHex(value) ? normalizeHex(value) : "#6366f1";
-  const [hsv, setHsv]         = useState<[number, number, number]>(() => hexToHsv(safeHex));
+  const [hsv, setHsv]          = useState<[number, number, number]>(() => hexToHsv(safeHex));
   const [inputVal, setInputVal] = useState(safeHex.toUpperCase());
-  const panelRef  = useRef<HTMLDivElement>(null);
-  const hueRef    = useRef<HTMLDivElement>(null);
-  const prevHex   = useRef(safeHex);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const hueRef   = useRef<HTMLDivElement>(null);
+  const prevHex  = useRef(safeHex);
 
   const currentHex = hsvToHex(...hsv);
 
-  // Sync from parent value changes only (not from internal HSV changes)
+  // Sync when parent value changes
   useEffect(() => {
     const norm = isValidHex(value) ? normalizeHex(value) : "#6366f1";
     if (norm !== prevHex.current) {
@@ -110,16 +143,14 @@ function InlineColorPicker({
   };
 
   const hueColor = `hsl(${hsv[0]}, 100%, 50%)`;
-  const cx = hsv[1] * PICKER_W;
-  const cy = (1 - hsv[2]) * PICKER_H;
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* SV gradient */}
+    <div className="flex flex-col gap-2" style={{ width: "100%" }}>
+      {/* SV gradient — full-width, 3:2 aspect ratio */}
       <div
         ref={panelRef}
         style={{
-          width: PICKER_W, height: PICKER_H,
+          width: "100%", aspectRatio: "3 / 2",
           position: "relative", cursor: "crosshair", userSelect: "none",
           border: "1px solid #d0d0d0",
         }}
@@ -129,20 +160,22 @@ function InlineColorPicker({
         <div style={{ position: "absolute", inset: 0, background: hueColor }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #fff, transparent)" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, #000)" }} />
-        {/* Cursor */}
+        {/* Cursor — percentage-based so it works at any width */}
         <div style={{
-          position: "absolute", left: cx, top: cy,
+          position: "absolute",
+          left: `${hsv[1] * 100}%`,
+          top: `${(1 - hsv[2]) * 100}%`,
           width: 10, height: 10, borderRadius: "50%",
           border: "2px solid white", boxShadow: "0 0 0 1.5px #000",
           transform: "translate(-50%, -50%)", pointerEvents: "none",
         }} />
       </div>
 
-      {/* Hue bar */}
+      {/* Hue bar — full-width */}
       <div
         ref={hueRef}
         style={{
-          width: PICKER_W, height: 14,
+          width: "100%", height: 14,
           background: "linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)",
           position: "relative", cursor: "pointer", userSelect: "none",
           border: "1px solid #d0d0d0",
@@ -152,7 +185,7 @@ function InlineColorPicker({
       >
         <div style={{
           position: "absolute", top: -1, bottom: -1,
-          left: (hsv[0] / 360) * PICKER_W,
+          left: `${(hsv[0] / 360) * 100}%`,
           width: 4, border: "2px solid white",
           boxShadow: "0 0 0 1px #000",
           transform: "translateX(-50%)", pointerEvents: "none",
@@ -194,6 +227,7 @@ export default function SplitHomepage({
   const [harmonyMode, setHarmonyMode] = useState<HarmonyMode>("split-complementary");
 
   const [primaryHex, setPrimaryHex]     = useState("#6366f1");
+  const [lightnessAdj, setLightnessAdj] = useState(0);
   const [fields, setFields]             = useState({
     secondary: "",
     tertiary:  "",
@@ -205,6 +239,16 @@ export default function SplitHomepage({
     setFields((f) => ({ ...f, [key]: val }));
     if (formError) setFormError("");
   };
+
+  // Effective primary (with lightness adjustment applied)
+  const basePrimary     = normalizeHex(isValidHex(primaryHex) ? primaryHex : "#6366f1");
+  const adjustedPrimary = lightnessAdj !== 0 ? shiftLightness(basePrimary, lightnessAdj) : basePrimary;
+
+  // Live WCAG contrast ratios for primary vs white/black
+  const vsWhite      = getWcagContrast(adjustedPrimary, "#ffffff");
+  const vsBlack      = getWcagContrast(adjustedPrimary, "#000000");
+  const levelVsWhite = getWcagLevel(vsWhite);
+  const levelVsBlack = getWcagLevel(vsBlack);
 
   const processFile = useCallback(
     (file: File) => {
@@ -228,13 +272,12 @@ export default function SplitHomepage({
   );
 
   const handleGenerate = () => {
-    const primaryVal = primaryHex.trim();
-    if (!primaryVal || !isValidHex(primaryVal)) {
+    if (!primaryHex.trim() || !isValidHex(primaryHex)) {
       setFormError("Please select a valid primary color");
       return;
     }
 
-    const primary = normalizeHex(primaryVal);
+    const primary = adjustedPrimary;
     const explicitKeys: (keyof ManualRoles)[] = ["primary"];
 
     const secondary = fields.secondary && isValidHex(fields.secondary) ? normalizeHex(fields.secondary) : null;
@@ -257,8 +300,8 @@ export default function SplitHomepage({
     onManualGenerate(roles, explicitKeys, harmonyMode);
   };
 
-  // Live preview for secondary/tertiary/accent
-  const generated = generateHarmonyColors(normalizeHex(isValidHex(primaryHex) ? primaryHex : "#6366f1"), harmonyMode);
+  // Live preview uses adjustedPrimary
+  const generated = generateHarmonyColors(adjustedPrimary, harmonyMode);
 
   const getSwatchColor = (key: "secondary" | "tertiary" | "accent"): string => {
     const val = fields[key];
@@ -397,7 +440,7 @@ export default function SplitHomepage({
           </div>
 
           {/* Primary color: inline HSV picker */}
-          <div className="mb-6">
+          <div className="mb-4">
             <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">
               Primary Color
               <span className="text-[#dc2626] ml-2">required</span>
@@ -409,6 +452,58 @@ export default function SplitHomepage({
                 if (formError) setFormError("");
               }}
             />
+          </div>
+
+          {/* Contrast display + lightness slider */}
+          <div className="mb-6 flex flex-col gap-3">
+            {/* WCAG contrast badges */}
+            <div className="flex gap-2 flex-wrap">
+              {([
+                { label: "vs White", ratio: vsWhite, level: levelVsWhite, bg: "#ffffff" },
+                { label: "vs Black", ratio: vsBlack, level: levelVsBlack, bg: "#000000" },
+              ] as const).map(({ label, ratio, level, bg }) => {
+                const levelColor = level === "AAA" ? "#16a34a" : level === "AA" ? "#2563eb" : "#dc2626";
+                return (
+                  <div key={label} className="flex items-center gap-2 border border-[#e8e8e4] px-3 py-2 flex-1 min-w-[120px]">
+                    <div className="w-4 h-4 border border-[#d0d0d0] shrink-0" style={{ backgroundColor: bg }} />
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-mono text-[10px] text-[#aaa] uppercase tracking-widest leading-none mb-0.5">{label}</span>
+                      <span className="font-mono text-[12px] font-bold leading-none" style={{ color: levelColor }}>
+                        {ratio.toFixed(1)}:1 <span className="text-[11px]">{level}</span>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Lightness slider */}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#aaa]">Lightness ±</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border border-[#d0d0d0]" style={{ backgroundColor: adjustedPrimary }} />
+                  <span className="font-mono text-[12px] text-[#888]">
+                    {lightnessAdj > 0 ? `+${lightnessAdj}` : lightnessAdj}
+                  </span>
+                  {lightnessAdj !== 0 && (
+                    <button
+                      onClick={() => setLightnessAdj(0)}
+                      className="font-mono text-[11px] text-[#aaa] hover:text-[#0a0a0a] transition-colors"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+              <input
+                type="range"
+                min={-50} max={50} step={1}
+                value={lightnessAdj}
+                onChange={(e) => setLightnessAdj(Number(e.target.value))}
+                className="w-full accent-[#0a0a0a]"
+              />
+            </div>
           </div>
 
           {/* Harmony mode picker */}
@@ -434,19 +529,25 @@ export default function SplitHomepage({
               ))}
             </div>
 
-            {/* Harmony preview strip */}
+            {/* Harmony preview strip — taller with role + hex labels */}
             <div className="flex gap-1 mt-3">
-              {["primary", "secondary", "tertiary", "accent"].map((role) => {
-                const val = role === "primary"
-                  ? normalizeHex(isValidHex(primaryHex) ? primaryHex : "#6366f1")
-                  : generated[role as keyof typeof generated];
+              {(["primary", "secondary", "tertiary", "accent"] as const).map((role) => {
+                const val = role === "primary" ? adjustedPrimary : generated[role];
+                const textCol = getWcagContrast(val, "#ffffff") >= 3 ? "#ffffff" : "#0a0a0a";
                 return (
                   <div
                     key={role}
-                    className="flex-1 h-3"
-                    style={{ backgroundColor: val }}
+                    className="flex-1 flex flex-col justify-end gap-0.5 px-1.5 py-1.5"
+                    style={{ backgroundColor: val, height: 56 }}
                     title={`${role}: ${val}`}
-                  />
+                  >
+                    <span className="font-mono text-[9px] uppercase tracking-widest leading-none" style={{ color: textCol, opacity: 0.7 }}>
+                      {role}
+                    </span>
+                    <span className="font-mono text-[9px] uppercase leading-none" style={{ color: textCol }}>
+                      {val}
+                    </span>
+                  </div>
                 );
               })}
             </div>
