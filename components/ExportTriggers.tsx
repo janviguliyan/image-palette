@@ -10,6 +10,7 @@ import {
   TYPOGRAPHY_SCALE, SHADOW_SCALE, SPACING_SCALE, RADIUS_SCALE,
   type OverrideMap,
 } from "@/lib/designTokens";
+import { buildFigmaPluginScript } from "@/components/FigmaExportModal";
 
 export type ExportType = "css" | "tailwind" | "figma" | "figma-plugin";
 
@@ -299,7 +300,7 @@ export function ExportModal({ ds, primaryFont, secondaryFont, overrides, trigger
     if (t === "css")          return buildCss(ds, primaryFont, secondaryFont, overrides);
     if (t === "tailwind")     return buildTailwind(ds, primaryFont, secondaryFont, overrides);
     if (t === "figma")        return buildFigmaJSON(ds, primaryFont, secondaryFont, overrides);
-    return buildFigmaScript(ds);
+    return buildFigmaPluginScript(ds, primaryFont, secondaryFont);
   };
 
   const copyTab = async (t: ExportType) => {
