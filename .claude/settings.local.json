@@ -5,7 +5,8 @@
       "Bash(node \"D:/Self/design/inspiration-project/image-palette/node_modules/next/dist/bin/next\" build)",
       "Bash(for f in components/*.tsx)",
       "Bash(do sed -i 's/text-\\\\[7px\\\\]/text-[12px]/g; s/text-\\\\[8px\\\\]/text-[12px]/g; s/text-\\\\[9px\\\\]/text-[12px]/g; s/text-\\\\[10px\\\\]/text-[12px]/g; s/text-\\\\[11px\\\\]/text-[12px]/g' \"$f\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(node ../../../node_modules/next/dist/bin/next build)"
     ]
   }
 }

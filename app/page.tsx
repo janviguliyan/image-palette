@@ -6,6 +6,7 @@ import type { ManualRoles } from "@/components/SplitHomepage";
 import PaletteResults from "@/components/PaletteResults";
 import UsageSection from "@/components/UsageSection";
 import ExportTriggers from "@/components/ExportTriggers";
+import type { ExportType } from "@/components/ExportTriggers";
 import DesignSystemPalette from "@/components/DesignSystemPalette";
 import NeutralColors from "@/components/NeutralColors";
 import SemanticColors from "@/components/SemanticColors";
@@ -14,7 +15,6 @@ import TemplateSelector from "@/components/TemplateSelector";
 import TypographySystem from "@/components/TypographySystem";
 import FoundationTokens from "@/components/FoundationTokens";
 import UIComponentsPreview from "@/components/UIComponentsPreview";
-import FigmaExportModal from "@/components/FigmaExportModal";
 import {
   mapColorsToRoles,
   buildDesignSystem,
@@ -33,7 +33,7 @@ export default function Home() {
   const [explicitRoleKeys, setExplicitRoleKeys] = useState<(keyof ManualRoles)[]>([]);
   const [inputSource, setInputSource]     = useState<"image" | "manual">("image");
   const [paletteTheme, setPaletteTheme]   = useState<PaletteTheme>("light");
-  const [figmaModalOpen, setFigmaModalOpen] = useState(false);
+  const [exportTab, setExportTab] = useState<ExportType | null>(null);
   const [harmonyMode, setHarmonyMode]     = useState<HarmonyMode>("split-complementary");
   const [primaryFont, setPrimaryFont]     = useState("Inter");
   const [secondaryFont, setSecondaryFont] = useState("Roboto");
@@ -153,7 +153,7 @@ export default function Home() {
               {/* Action buttons */}
               <div className="flex items-center gap-4 md:gap-6 shrink-0">
                 <button
-                  onClick={() => setFigmaModalOpen(true)}
+                  onClick={() => setExportTab("css")}
                   className="font-mono text-[13px] px-5 py-2.5 flex items-center gap-2 transition-opacity hover:opacity-85"
                   style={{
                     backgroundColor: designSystem.roles.primary,
@@ -161,7 +161,11 @@ export default function Home() {
                     border: `1px solid ${designSystem.roles.primary}`,
                   }}
                 >
-                  Download/Copy as
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 1v7M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
+                    <path d="M1.5 10h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
+                  </svg>
+                  Download / Copy
                 </button>
                 <button
                   onClick={handleReset}
@@ -192,12 +196,14 @@ export default function Home() {
             onThemeChange={setPaletteTheme}
           />
 
-          {/* Export triggers */}
+          {/* Export triggers — also controlled by header button via externalTab */}
           <ExportTriggers
             ds={designSystem}
             primaryFont={primaryFont}
             secondaryFont={secondaryFont}
             typographyOverrides={typographyOverrides}
+            externalTab={exportTab}
+            onExternalClose={() => setExportTab(null)}
           />
 
           {/* ③ Color Scales — Section 03 */}
@@ -274,11 +280,6 @@ export default function Home() {
             </div>
             <TemplateSelector colors={templateColors} />
           </div>
-
-          {/* Figma export modal */}
-          {figmaModalOpen && (
-            <FigmaExportModal ds={designSystem} onClose={() => setFigmaModalOpen(false)} />
-          )}
 
           {/* Footer */}
           <footer className="px-8 md:px-12 py-8 flex items-center justify-between border-t border-[#e8e8e4]">
