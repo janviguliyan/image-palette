@@ -43,13 +43,13 @@ export default function CreativeTemplate({ colors }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <button
-            className="px-4 py-2 text-[11px] font-bold"
+            className="px-4 py-2 text-[12px] font-bold"
             style={{ backgroundColor: hexToRgba(c1, 0.15), color: c1 }}
           >
             Work
           </button>
           <button
-            className="px-4 py-2 text-[11px] font-bold"
+            className="px-4 py-2 text-[12px] font-bold"
             style={{ backgroundColor: c0, color: getContrastColor(c0) }}
           >
             Say hello →
@@ -61,7 +61,7 @@ export default function CreativeTemplate({ colors }: Props) {
       <div className="relative z-10 px-8 pt-4 pb-8">
         {/* Tag */}
         <div
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold mb-5"
+          className="inline-flex items-center gap-2 px-3 py-1.5 text-[12px] font-bold mb-5"
           style={{ backgroundColor: c2, color: getContrastColor(c2) }}
         >
           ✦ Creative Studio · 2025
@@ -104,11 +104,11 @@ export default function CreativeTemplate({ colors }: Props) {
                 transform: `rotate(${rot})`,
               }}
             >
-              <span className="font-black text-[10px] uppercase tracking-[0.2em] block mb-6 opacity-60">
+              <span className="font-black text-[12px] uppercase tracking-[0.2em] block mb-6 opacity-60">
                 0{["Brand", "Motion", "3D", "Web"].indexOf(title) + 1}
               </span>
               <p className="font-black text-xl leading-none">{title}</p>
-              <p className="text-[10px] font-medium mt-1 opacity-70">{sub}</p>
+              <p className="text-[12px] font-medium mt-1 opacity-70">{sub}</p>
             </div>
           ))}
         </div>
@@ -119,7 +119,7 @@ export default function CreativeTemplate({ colors }: Props) {
             (tag, i) => (
               <span
                 key={tag}
-                className="px-3 py-1.5 text-[11px] font-bold border"
+                className="px-3 py-1.5 text-[12px] font-bold border"
                 style={{
                   backgroundColor: hexToRgba(colors[i % colors.length], 0.1),
                   color: colors[i % colors.length],
@@ -139,14 +139,14 @@ export default function CreativeTemplate({ colors }: Props) {
         >
           <div>
             <p className="text-white font-black text-[15px]">Start something bold.</p>
-            <p className="text-white text-[11px] opacity-40 mt-0.5">We don't do boring.</p>
+            <p className="text-white text-[12px] opacity-40 mt-0.5">We don't do boring.</p>
           </div>
           <div className="flex items-center gap-3">
             {colors.slice(0, 4).map((c) => (
               <div key={c} className="w-3 h-3" style={{ backgroundColor: c }} />
             ))}
             <button
-              className="ml-2 px-5 py-2.5 font-black text-[11px]"
+              className="ml-2 px-5 py-2.5 font-black text-[12px]"
               style={{ backgroundColor: c0, color: getContrastColor(c0) }}
             >
               Let's go ✦

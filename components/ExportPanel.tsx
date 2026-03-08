@@ -107,7 +107,7 @@ export default function ExportPanel({ ds }: Props) {
   return (
     <div className="border-b-2 border-[#0a0a0a]">
       <div className="border-b border-[#0a0a0a] px-6 py-3 flex items-center justify-between">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#888]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#888]">
           07 / Export
         </p>
       </div>
@@ -118,7 +118,7 @@ export default function ExportPanel({ ds }: Props) {
           <button
             key={id}
             onClick={() => { setTab(id); setCopied(false); }}
-            className={`px-5 py-2.5 font-mono text-[10px] uppercase tracking-widest border-r border-[#e8e8e4] transition-colors ${
+            className={`px-5 py-2.5 font-mono text-[12px] uppercase tracking-widest border-r border-[#e8e8e4] transition-colors ${
               tab === id
                 ? "bg-[#0a0a0a] text-white"
                 : "text-[#888] hover:bg-[#f0f0ec]"
@@ -130,7 +130,7 @@ export default function ExportPanel({ ds }: Props) {
         <div className="flex-1" />
         <button
           onClick={handleCopy}
-          className="px-5 py-2.5 font-mono text-[10px] uppercase tracking-widest text-[#888] hover:bg-[#f0f0ec] transition-colors flex items-center gap-2"
+          className="px-5 py-2.5 font-mono text-[12px] uppercase tracking-widest text-[#888] hover:bg-[#f0f0ec] transition-colors flex items-center gap-2"
         >
           {copied ? (
             <>
@@ -153,7 +153,7 @@ export default function ExportPanel({ ds }: Props) {
 
       {/* Code block */}
       <div className="relative">
-        <pre className="px-6 py-5 text-[11px] font-mono text-[#444] bg-[#fafaf8] overflow-x-auto leading-relaxed max-h-80 overflow-y-auto">
+        <pre className="px-6 py-5 text-[12px] font-mono text-[#444] bg-[#fafaf8] overflow-x-auto leading-relaxed max-h-80 overflow-y-auto">
           {content}
         </pre>
       </div>
@@ -161,17 +161,17 @@ export default function ExportPanel({ ds }: Props) {
       {/* Format hints */}
       <div className="border-t border-[#e8e8e4] px-6 py-3 flex gap-6 flex-wrap">
         {tab === "css" && (
-          <p className="font-mono text-[9px] text-[#aaa]">
+          <p className="font-mono text-[12px] text-[#aaa]">
             Paste in your global stylesheet and use like: <code className="text-[#666]">var(--color-primary-500)</code>
           </p>
         )}
         {tab === "tailwind" && (
-          <p className="font-mono text-[9px] text-[#aaa]">
+          <p className="font-mono text-[12px] text-[#aaa]">
             Paste inside <code className="text-[#666]">theme.extend.colors</code> in <code className="text-[#666]">tailwind.config.js</code>, then use <code className="text-[#666]">bg-primary-500</code>
           </p>
         )}
         {tab === "figma" && (
-          <p className="font-mono text-[9px] text-[#aaa]">
+          <p className="font-mono text-[12px] text-[#aaa]">
             Import in Figma using a Variables Import plugin (e.g. "Design Tokens" or "Variables Import")
           </p>
         )}

@@ -609,18 +609,18 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
         {/* Header */}
         <div className="border-b-2 border-[#0a0a0a] px-8 py-5 flex items-start justify-between gap-4 shrink-0">
           <div>
-            <p className="font-mono text-[7px] uppercase tracking-[0.5em] text-[#aaa] mb-1.5">Export</p>
+            <p className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa] mb-1.5">Export</p>
             <h2 className="font-black text-xl uppercase leading-none tracking-tighter text-[#0a0a0a]">Open in Figma</h2>
-            <p className="font-mono text-[8px] text-[#888] mt-2">
+            <p className="font-mono text-[12px] text-[#888] mt-2">
               Plugin script · Run in Figma Desktop console
             </p>
           </div>
-          <button onClick={onClose} className="font-mono text-[9px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors mt-0.5 shrink-0">✕</button>
+          <button onClick={onClose} className="font-mono text-[12px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors mt-0.5 shrink-0">✕</button>
         </div>
 
         {/* What it creates */}
         <div className="border-b border-[#e8e8e4] px-8 py-4 shrink-0">
-          <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa] mb-3">What gets created</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">What gets created</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
             {[
               `${Object.keys(buildDS(ds).colors).length} paint styles  (colors)`,
@@ -634,7 +634,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <span style={{ width: 5, height: 5, borderRadius: 9999, background: accent, display: "inline-block", flexShrink: 0 }} />
-                <span className="font-mono text-[8px] text-[#555]">{item}</span>
+                <span className="font-mono text-[12px] text-[#555]">{item}</span>
               </div>
             ))}
           </div>
@@ -642,7 +642,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Steps */}
         <div className="border-b border-[#e8e8e4] px-8 py-4 shrink-0">
-          <p className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa] mb-3">Steps</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">Steps</p>
           <div className="space-y-1.5">
             {[
               "Open Figma Desktop (browser won't work)",
@@ -651,10 +651,10 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
               "A 'Design System' page appears with everything",
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="font-mono text-[8px] font-black shrink-0" style={{ color: accent }}>
+                <span className="font-mono text-[12px] font-black shrink-0" style={{ color: accent }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="font-mono text-[8px] text-[#555] leading-relaxed">{step}</span>
+                <span className="font-mono text-[12px] text-[#555] leading-relaxed">{step}</span>
               </div>
             ))}
           </div>
@@ -662,10 +662,10 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Script */}
         <div className="border-b border-[#e8e8e4] px-8 py-3 flex items-center justify-between shrink-0">
-          <span className="font-mono text-[7px] uppercase tracking-[0.4em] text-[#aaa]">Script</span>
+          <span className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa]">Script</span>
           <button
             onClick={copy}
-            className="font-mono text-[8px] uppercase tracking-widest px-4 py-1.5 transition-colors"
+            className="font-mono text-[12px] uppercase tracking-widest px-4 py-1.5 transition-colors"
             style={{ background: copied ? "#16a34a" : accent, color: "#fff", border: "none", borderRadius: 3 }}
           >
             {copied ? "✓ Copied!" : "Copy Script"}
@@ -688,7 +688,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
 
         {/* Footer */}
         <div className="border-t border-[#e8e8e4] px-8 py-3 shrink-0">
-          <p className="font-mono text-[7px] text-[#ccc]">
+          <p className="font-mono text-[12px] text-[#ccc]">
             Requires Figma Desktop · Inter & JetBrains Mono fonts must be installed in Figma
           </p>
         </div>

@@ -7,13 +7,14 @@ import {
   buildTypographyCss, buildSpacingCss, buildRadiusCss, buildShadowCss,
   buildTypographyTailwind, buildSpacingTailwind, buildRadiusTailwind, buildShadowTailwind,
   buildFoundationFigmaTokens,
+  type OverrideMap,
 } from "@/lib/designTokens";
 
 type ExportType = "css" | "tailwind" | "figma";
 
 // ── Build functions ──────────────────────────────────────────────────────────
 
-function buildCss(ds: DesignSystem): string {
+function buildCss(ds: DesignSystem, primaryFont: string, secondaryFont: string, overrides: OverrideMap): string {
   const lines: string[] = [":root {"];
   const groups: [string, Record<string, string>][] = [
     ["primary",   ds.scales.primary],
@@ -33,7 +34,7 @@ function buildCss(ds: DesignSystem): string {
       lines.push(`  --color-${name}-${step}: ${scale[step]};`);
     }
   }
-  lines.push(buildTypographyCss());
+  lines.push(buildTypographyCss(primaryFont, secondaryFont, overrides));
   lines.push(buildSpacingCss());
   lines.push(buildRadiusCss());
   lines.push(buildShadowCss());
@@ -41,7 +42,7 @@ function buildCss(ds: DesignSystem): string {
   return lines.join("\n");
 }
 
-function buildTailwind(ds: DesignSystem): string {
+function buildTailwind(ds: DesignSystem, primaryFont: string, secondaryFont: string, overrides: OverrideMap): string {
   const groups: [string, Record<string, string>][] = [
     ["primary",   ds.scales.primary],
     ["secondary", ds.scales.secondary],
@@ -60,14 +61,14 @@ function buildTailwind(ds: DesignSystem): string {
     lines.push("  },");
   }
   lines.push("},");
-  lines.push(buildTypographyTailwind());
+  lines.push(buildTypographyTailwind(primaryFont, secondaryFont, overrides));
   lines.push(buildSpacingTailwind());
   lines.push(buildRadiusTailwind());
   lines.push(buildShadowTailwind());
   return lines.join("\n");
 }
 
-function buildFigma(ds: DesignSystem): string {
+function buildFigma(ds: DesignSystem, primaryFont: string, secondaryFont: string, overrides: OverrideMap): string {
   const tokens: Record<string, string> = {};
   const groups: [string, Record<string, string>][] = [
     ["primary",   ds.scales.primary],
@@ -83,7 +84,7 @@ function buildFigma(ds: DesignSystem): string {
   for (const [name, scale] of groups) {
     for (const step of SCALE_STEPS) tokens[`color.${name}.${step}`] = scale[step];
   }
-  const foundation = buildFoundationFigmaTokens();
+  const foundation = buildFoundationFigmaTokens(primaryFont, secondaryFont, overrides);
   Object.assign(tokens, foundation);
   return JSON.stringify(tokens, null, 2);
 }
@@ -94,41 +95,43 @@ const STEPS: Record<ExportType, string[]> = {
   css: [
     "Paste the :root { } block into your global stylesheet (e.g. globals.css or app.css)",
     "All design tokens are now available as CSS custom properties: colors, typography, spacing, radius, and shadows",
-    "Colors: var(--color-primary-500) · Typography: var(--text-h1) · Spacing: var(--space-4)",
-    "Radius: var(--radius-md) · Shadows: var(--shadow-md) — works with any framework",
+    "Colors: var(--color-primary-500) · Typography: var(--text-h1) · Fonts: var(--font-primary)",
+    "Mobile sizes: var(--text-h1-mobile) · Radius: var(--radius-md) · Shadows: var(--shadow-md)",
   ],
   tailwind: [
     "Open tailwind.config.js (or tailwind.config.ts) at the root of your project",
-    "Inside theme.extend, paste the snippet — includes colors, fontSize, spacing, borderRadius, and boxShadow",
+    "Inside theme.extend, paste the snippet — includes colors, fontFamily, fontSize (desktop + mobile), spacing, borderRadius, and boxShadow",
     "Restart your dev server: npm run dev",
-    "Use utilities like: bg-primary-500, text-h1, p-4, rounded-md, shadow-lg",
+    "Use utilities like: bg-primary-500, text-h1, font-primary, font-secondary, p-4, rounded-md, shadow-lg",
   ],
   figma: [
     'Install the "Design Tokens" or "Tokens Studio" plugin from the Figma Community',
     "Open the plugin: Plugins → Tokens Studio → Import JSON",
-    "Paste the copied JSON — includes color, typography, spacing, radius, and shadow tokens",
+    "Paste the copied JSON — includes color, typography (desktop + mobile), font families, spacing, radius, and shadow tokens",
     "Tokens appear in Local Variables — apply to fills, strokes, text, and effects via the Variables panel (Shift+V)",
     "Use color styles for swatches, text styles for typography, and effect styles for shadows",
   ],
 };
 
 const TAB_LABELS: Record<ExportType, string> = {
-  css: "CSS Variables",
+  css:     "CSS Variables",
   tailwind: "Tailwind",
-  figma: "Figma JSON",
+  figma:   "Figma JSON",
 };
 
 interface ModalProps {
   ds: DesignSystem;
+  primaryFont: string;
+  secondaryFont: string;
+  overrides: OverrideMap;
   triggeredType: ExportType;
   onClose: () => void;
 }
 
-function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
+function ExportModal({ ds, primaryFont, secondaryFont, overrides, triggeredType, onClose }: ModalProps) {
   const [activeTab, setActiveTab] = useState<ExportType>(triggeredType);
   const [tabCopied, setTabCopied] = useState<ExportType | null>(null);
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
@@ -136,7 +139,11 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
   }, [onClose]);
 
   const getContent = (t: ExportType) =>
-    t === "css" ? buildCss(ds) : t === "tailwind" ? buildTailwind(ds) : buildFigma(ds);
+    t === "css"
+      ? buildCss(ds, primaryFont, secondaryFont, overrides)
+      : t === "tailwind"
+      ? buildTailwind(ds, primaryFont, secondaryFont, overrides)
+      : buildFigma(ds, primaryFont, secondaryFont, overrides);
 
   const copyTab = async (t: ExportType) => {
     const content = getContent(t);
@@ -168,17 +175,17 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
               </svg>
             </div>
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#0a0a0a]">
+              <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#0a0a0a]">
                 Copied to Clipboard
               </p>
-              <p className="font-mono text-[8px] text-[#888] mt-0.5">
-                {TAB_LABELS[triggeredType]} · Colors + Typography + Spacing + Radius + Shadows
+              <p className="font-mono text-[12px] text-[#888] mt-0.5">
+                {TAB_LABELS[triggeredType]} · Colors + Typography + Fonts + Spacing + Radius + Shadows
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="font-mono text-[9px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors border border-transparent hover:border-[#e8e8e4] px-3 py-1.5"
+            className="font-mono text-[12px] uppercase tracking-widest text-[#888] hover:text-[#0a0a0a] transition-colors border border-transparent hover:border-[#e8e8e4] px-3 py-1.5"
           >
             ✕ Close
           </button>
@@ -190,10 +197,8 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`px-5 py-3 font-mono text-[9px] uppercase tracking-widest border-r border-[#0a0a0a] last:border-r-0 transition-colors ${
-                activeTab === t
-                  ? "bg-[#0a0a0a] text-white"
-                  : "text-[#888] hover:bg-[#f0f0ec]"
+              className={`px-5 py-3 font-mono text-[12px] uppercase tracking-widest border-r border-[#0a0a0a] last:border-r-0 transition-colors ${
+                activeTab === t ? "bg-[#0a0a0a] text-white" : "text-[#888] hover:bg-[#f0f0ec]"
               }`}
             >
               {t === triggeredType ? `✓ ${TAB_LABELS[t]}` : TAB_LABELS[t]}
@@ -205,34 +210,34 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
         <div className="flex-1 overflow-y-auto">
           {/* Steps */}
           <div className="px-6 md:px-8 py-6 border-b border-[#e8e8e4]">
-            <p className="font-mono text-[8px] uppercase tracking-[0.4em] text-[#aaa] mb-4">
+            <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-4">
               How to use
             </p>
             <ol className="space-y-3">
               {STEPS[activeTab].map((step, i) => (
                 <li key={i} className="flex gap-4">
-                  <span className="font-mono text-[8px] text-[#ccc] shrink-0 mt-0.5 w-4">{i + 1}.</span>
-                  <span className="font-mono text-[10px] text-[#444] leading-relaxed">{step}</span>
+                  <span className="font-mono text-[12px] text-[#ccc] shrink-0 mt-0.5 w-4">{i + 1}.</span>
+                  <span className="font-mono text-[12px] text-[#444] leading-relaxed">{step}</span>
                 </li>
               ))}
             </ol>
           </div>
 
-          {/* Code preview */}
+          {/* Code preview header */}
           <div className="px-6 md:px-8 py-4 border-b border-[#e8e8e4] flex items-center justify-between">
-            <p className="font-mono text-[8px] uppercase tracking-[0.4em] text-[#aaa]">
+            <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa]">
               {TAB_LABELS[activeTab]}
             </p>
             <button
               onClick={() => copyTab(activeTab)}
-              className="font-mono text-[8px] uppercase tracking-widest border border-[#e8e8e4] hover:border-[#0a0a0a] px-3 py-1.5 transition-colors flex items-center gap-1.5"
+              className="font-mono text-[12px] uppercase tracking-widest border border-[#e8e8e4] hover:border-[#0a0a0a] px-3 py-1.5 transition-colors flex items-center gap-1.5"
               style={{ color: tabCopied === activeTab ? "#16a34a" : "#888" }}
             >
               {tabCopied === activeTab ? "✓ Copied" : "Copy"}
             </button>
           </div>
 
-          <pre className="px-6 md:px-8 py-5 text-[10px] font-mono text-[#555] leading-relaxed overflow-x-auto whitespace-pre">
+          <pre className="px-6 md:px-8 py-5 text-[12px] font-mono text-[#555] leading-relaxed overflow-x-auto whitespace-pre">
             {getContent(activeTab)}
           </pre>
         </div>
@@ -245,13 +250,24 @@ function ExportModal({ ds, triggeredType, onClose }: ModalProps) {
 
 interface Props {
   ds: DesignSystem;
+  primaryFont?: string;
+  secondaryFont?: string;
+  typographyOverrides?: OverrideMap;
 }
 
-export default function ExportTriggers({ ds }: Props) {
+export default function ExportTriggers({
+  ds,
+  primaryFont  = "Inter",
+  secondaryFont = "Roboto",
+  typographyOverrides = {},
+}: Props) {
   const [openModal, setOpenModal] = useState<ExportType | null>(null);
 
   const handleClick = async (type: ExportType) => {
-    const content = type === "css" ? buildCss(ds) : type === "tailwind" ? buildTailwind(ds) : buildFigma(ds);
+    const content =
+      type === "css"      ? buildCss(ds, primaryFont, secondaryFont, typographyOverrides)
+      : type === "tailwind" ? buildTailwind(ds, primaryFont, secondaryFont, typographyOverrides)
+      : buildFigma(ds, primaryFont, secondaryFont, typographyOverrides);
     try { await navigator.clipboard.writeText(content); } catch {
       const el = document.createElement("textarea");
       el.value = content; document.body.appendChild(el); el.select();
@@ -262,8 +278,8 @@ export default function ExportTriggers({ ds }: Props) {
 
   const BTNS: { type: ExportType; label: string; subLabel: string }[] = [
     { type: "css",      label: "CSS Variables",  subLabel: "var(--color-primary-500)" },
-    { type: "tailwind", label: "Tailwind Config", subLabel: "bg-primary-500" },
-    { type: "figma",    label: "Figma Styles",    subLabel: "color.primary.500" },
+    { type: "tailwind", label: "Tailwind Config", subLabel: "bg-primary-500, font-primary" },
+    { type: "figma",    label: "Figma Styles",    subLabel: "color.primary.500, font.primary" },
   ];
 
   return (
@@ -271,7 +287,7 @@ export default function ExportTriggers({ ds }: Props) {
       <div className="border-b-2 border-[#0a0a0a] flex flex-col sm:flex-row">
         {/* Label cell */}
         <div className="border-b sm:border-b-0 sm:border-r-2 border-[#0a0a0a] px-8 md:px-12 py-7 flex items-center shrink-0">
-          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#888]">Copy As</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#888]">Copy As</p>
         </div>
 
         {/* Buttons */}
@@ -282,25 +298,29 @@ export default function ExportTriggers({ ds }: Props) {
               onClick={() => handleClick(type)}
               className="group flex-1 flex items-center gap-5 px-8 md:px-12 py-7 hover:bg-[#f0f0ec] transition-colors text-left"
             >
-              {/* Arrow icon */}
               <div className="w-10 h-10 border-2 border-[#0a0a0a] flex items-center justify-center shrink-0 transition-all group-hover:bg-[#0a0a0a]">
-                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" className="transition-colors group-hover:stroke-white stroke-[#0a0a0a]">
+                <svg
+                  width="13" height="13" viewBox="0 0 12 12" fill="none"
+                  className="transition-colors group-hover:stroke-white stroke-[#0a0a0a]"
+                >
                   <path d="M6 1v7M3 5l3 3 3-3" strokeWidth="1.2" strokeLinecap="square" />
                 </svg>
               </div>
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0a0a0a]">{label}</p>
-                <p className="font-mono text-[8px] text-[#aaa] mt-1">{subLabel}</p>
+                <p className="font-mono text-[13px] uppercase tracking-[0.2em] text-[#0a0a0a]">{label}</p>
+                <p className="font-mono text-[12px] text-[#aaa] mt-1">{subLabel}</p>
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Modal — rendered via portal to escape transform/stacking-context issues */}
       {openModal && createPortal(
         <ExportModal
           ds={ds}
+          primaryFont={primaryFont}
+          secondaryFont={secondaryFont}
+          overrides={typographyOverrides}
           triggeredType={openModal}
           onClose={() => setOpenModal(null)}
         />,

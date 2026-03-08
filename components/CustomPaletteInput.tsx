@@ -89,7 +89,7 @@ export default function CustomPaletteInput({ onGenerate }: Props) {
   return (
     <form onSubmit={handleSubmit} className="px-8 py-10">
       <div className="max-w-2xl">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#888] mb-6">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#888] mb-6">
           Enter your brand colors
         </p>
 
@@ -101,7 +101,7 @@ export default function CustomPaletteInput({ onGenerate }: Props) {
 
             return (
               <div key={key} className="flex flex-col gap-1.5">
-                <label className="font-mono text-[10px] uppercase tracking-widest text-[#555] flex items-center gap-1.5">
+                <label className="font-mono text-[12px] uppercase tracking-widest text-[#555] flex items-center gap-1.5">
                   {label}
                   {required && <span className="text-[#dc2626]">*</span>}
                   {!required && <span className="text-[#bbb]">(optional)</span>}
@@ -126,12 +126,12 @@ export default function CustomPaletteInput({ onGenerate }: Props) {
                     value={val}
                     onChange={(e) => update(key, e.target.value)}
                     placeholder={placeholder}
-                    className="flex-1 px-3 py-2 font-mono text-[11px] text-[#0a0a0a] bg-transparent outline-none placeholder-[#ccc]"
+                    className="flex-1 px-3 py-2 font-mono text-[12px] text-[#0a0a0a] bg-transparent outline-none placeholder-[#ccc]"
                   />
                 </div>
 
                 {err && (
-                  <span className="font-mono text-[9px] text-[#dc2626]">{err}</span>
+                  <span className="font-mono text-[12px] text-[#dc2626]">{err}</span>
                 )}
               </div>
             );
@@ -140,12 +140,12 @@ export default function CustomPaletteInput({ onGenerate }: Props) {
 
         <button
           type="submit"
-          className="font-mono text-[11px] uppercase tracking-widest bg-[#0a0a0a] text-white px-8 py-3 hover:bg-[#333] transition-colors"
+          className="font-mono text-[12px] uppercase tracking-widest bg-[#0a0a0a] text-white px-8 py-3 hover:bg-[#333] transition-colors"
         >
           Generate Design System →
         </button>
 
-        <p className="font-mono text-[9px] text-[#bbb] mt-3">
+        <p className="font-mono text-[12px] text-[#bbb] mt-3">
           Optional fields will be auto-generated from your primary color if left blank.
         </p>
       </div>

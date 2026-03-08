@@ -38,7 +38,7 @@ export default function HowToUse() {
   return (
     <div className="border-b-2 border-[#0a0a0a]">
       <div className="border-b border-[#0a0a0a] px-6 py-3">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#888]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#888]">
           08 / How to Use
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function HowToUse() {
             {/* Header */}
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 bg-[#0a0a0a] flex items-center justify-center shrink-0">
-                <span className="font-mono text-[9px] text-white">{number}</span>
+                <span className="font-mono text-[12px] text-white">{number}</span>
               </div>
               <h3 className="font-black text-sm uppercase tracking-wide text-[#0a0a0a]">{tool}</h3>
             </div>
@@ -58,21 +58,21 @@ export default function HowToUse() {
             <ol className="space-y-2">
               {steps.map((step, i) => (
                 <li key={i} className="flex gap-2.5">
-                  <span className="font-mono text-[9px] text-[#bbb] shrink-0 mt-0.5">{i + 1}.</span>
-                  <span className="font-mono text-[10px] text-[#555] leading-relaxed">{step}</span>
+                  <span className="font-mono text-[12px] text-[#bbb] shrink-0 mt-0.5">{i + 1}.</span>
+                  <span className="font-mono text-[12px] text-[#555] leading-relaxed">{step}</span>
                 </li>
               ))}
             </ol>
 
             {/* Code snippet */}
             {code && (
-              <pre className="bg-[#f4f4f2] border border-[#e8e8e4] px-3 py-2.5 text-[9px] font-mono text-[#444] leading-relaxed overflow-x-auto">
+              <pre className="bg-[#f4f4f2] border border-[#e8e8e4] px-3 py-2.5 text-[12px] font-mono text-[#444] leading-relaxed overflow-x-auto">
                 {code}
               </pre>
             )}
 
             {/* Hint */}
-            <p className="font-mono text-[9px] text-[#aaa] leading-relaxed border-l-2 border-[#e8e8e4] pl-3">
+            <p className="font-mono text-[12px] text-[#aaa] leading-relaxed border-l-2 border-[#e8e8e4] pl-3">
               {hint}
             </p>
           </div>

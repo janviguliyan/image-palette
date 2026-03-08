@@ -22,7 +22,7 @@ export default function TechTemplate({ colors }: Props) {
     >
       {/* Top status bar */}
       <div
-        className="flex items-center gap-4 px-5 py-2 border-b text-[9px] uppercase tracking-widest"
+        className="flex items-center gap-4 px-5 py-2 border-b text-[12px] uppercase tracking-widest"
         style={{ borderColor: BORDER, color: DIMMER }}
       >
         <span className="flex items-center gap-1.5">
@@ -46,7 +46,7 @@ export default function TechTemplate({ colors }: Props) {
                 className="w-5 h-5"
                 style={{ backgroundColor: c0, boxShadow: glow(c0) }}
               />
-              <span className="text-[11px] font-bold tracking-wider uppercase text-white">SYS.IO</span>
+              <span className="text-[12px] font-bold tracking-wider uppercase text-white">SYS.IO</span>
             </div>
           </div>
 
@@ -62,7 +62,7 @@ export default function TechTemplate({ colors }: Props) {
             ].map(({ label, active, c }) => (
               <div
                 key={label}
-                className="flex items-center gap-2.5 px-3 py-1.5 text-[10px] cursor-pointer"
+                className="flex items-center gap-2.5 px-3 py-1.5 text-[12px] cursor-pointer"
                 style={{
                   backgroundColor: active ? hexToRgba(c, 0.12) : "transparent",
                   color: active ? c : DIMMER,
@@ -80,7 +80,7 @@ export default function TechTemplate({ colors }: Props) {
 
           {/* Palette dots */}
           <div className="px-4 py-3 border-t" style={{ borderColor: BORDER }}>
-            <p className="text-[8px] uppercase tracking-widest mb-2" style={{ color: DIMMER }}>Palette</p>
+            <p className="text-[12px] uppercase tracking-widest mb-2" style={{ color: DIMMER }}>Palette</p>
             <div className="flex flex-wrap gap-1.5">
               {colors.map((c) => (
                 <div
@@ -98,13 +98,13 @@ export default function TechTemplate({ colors }: Props) {
           {/* Page header */}
           <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: BORDER }}>
             <div>
-              <p className="text-[8px] uppercase tracking-widest" style={{ color: DIMMER }}>
+              <p className="text-[12px] uppercase tracking-widest" style={{ color: DIMMER }}>
                 sys.io / dashboard
               </p>
               <h1 className="text-[14px] font-bold text-white mt-0.5">System Overview</h1>
             </div>
             <button
-              className="text-[9px] uppercase tracking-widest px-3 py-1.5 border font-bold"
+              className="text-[12px] uppercase tracking-widest px-3 py-1.5 border font-bold"
               style={{ borderColor: hexToRgba(c0, 0.4), color: c0 }}
             >
               + Deploy
@@ -127,9 +127,9 @@ export default function TechTemplate({ colors }: Props) {
                     backgroundColor: hexToRgba(c, 0.05),
                   }}
                 >
-                  <p className="text-[8px] uppercase tracking-widest" style={{ color: DIMMER }}>{label}</p>
+                  <p className="text-[12px] uppercase tracking-widest" style={{ color: DIMMER }}>{label}</p>
                   <p className="text-[22px] font-bold mt-1" style={{ color: c, textShadow: glow(c) }}>{value}</p>
-                  <p className="text-[9px] mt-0.5" style={{ color: hexToRgba(c, 0.6) }}>{delta}</p>
+                  <p className="text-[12px] mt-0.5" style={{ color: hexToRgba(c, 0.6) }}>{delta}</p>
                 </div>
               ))}
             </div>
@@ -140,8 +140,8 @@ export default function TechTemplate({ colors }: Props) {
               style={{ borderColor: BORDER }}
             >
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[8px] uppercase tracking-widest" style={{ color: DIMMER }}>Throughput / 24h</p>
-                <p className="text-[8px] uppercase tracking-widest" style={{ color: hexToRgba(c0, 0.6) }}>Live</p>
+                <p className="text-[12px] uppercase tracking-widest" style={{ color: DIMMER }}>Throughput / 24h</p>
+                <p className="text-[12px] uppercase tracking-widest" style={{ color: hexToRgba(c0, 0.6) }}>Live</p>
               </div>
               <div className="flex items-end gap-px h-16">
                 {[0.45, 0.7, 0.5, 0.85, 0.6, 0.92, 0.72, 0.88, 0.55, 0.78, 0.96, 0.62, 0.82, 0.73, 0.52, 0.89, 0.67, 0.74, 0.91, 0.58].map((h, i) => (
@@ -161,7 +161,7 @@ export default function TechTemplate({ colors }: Props) {
             {/* Log stream */}
             <div className="border" style={{ borderColor: BORDER }}>
               <div className="px-3 py-2 border-b flex items-center justify-between" style={{ borderColor: BORDER }}>
-                <p className="text-[8px] uppercase tracking-widest" style={{ color: DIMMER }}>Event Log</p>
+                <p className="text-[12px] uppercase tracking-widest" style={{ color: DIMMER }}>Event Log</p>
                 <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: c0 }} />
               </div>
               {[
@@ -172,7 +172,7 @@ export default function TechTemplate({ colors }: Props) {
               ].map(({ t, status, msg, ms, c }) => (
                 <div
                   key={msg}
-                  className="flex items-center gap-4 px-3 py-1.5 border-b text-[9px]"
+                  className="flex items-center gap-4 px-3 py-1.5 border-b text-[12px]"
                   style={{ borderColor: BORDER }}
                 >
                   <span style={{ color: DIMMER }}>{t}</span>

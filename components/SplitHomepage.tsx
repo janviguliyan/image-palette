@@ -13,7 +13,7 @@ export interface ManualRoles {
 
 interface Props {
   onImageUpload: (file: File, previewUrl: string) => void;
-  onManualGenerate: (roles: ManualRoles, explicitKeys: (keyof ManualRoles)[]) => void;
+  onManualGenerate: (roles: ManualRoles, explicitKeys: (keyof ManualRoles)[], mode: HarmonyMode) => void;
   isLoading?: boolean;
   error?: string | null;
   onErrorDismiss?: () => void;
@@ -114,7 +114,7 @@ export default function SplitHomepage({
     };
 
     setFormError("");
-    onManualGenerate(roles, explicitKeys);
+    onManualGenerate(roles, explicitKeys, harmonyMode);
   };
 
   // Live preview: if primary is valid, preview harmony colors for empty slots
@@ -140,11 +140,11 @@ export default function SplitHomepage({
       <div className="border-b-2 border-[#0a0a0a] px-8 md:px-12 py-5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-3.5 h-3.5 bg-[#0a0a0a]" />
-          <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#0a0a0a]">
+          <span className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#0a0a0a]">
             Design System Generator
           </span>
         </div>
-        <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
+        <span className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
           Generate · Export · Use
         </span>
       </div>
@@ -152,8 +152,8 @@ export default function SplitHomepage({
       {/* ── Error banner ── */}
       {error && (
         <div className="border-b border-[#dc2626] bg-[#fef2f2] px-8 md:px-12 py-3 flex items-center justify-between shrink-0">
-          <span className="font-mono text-[10px] text-[#dc2626]">{error}</span>
-          <button onClick={onErrorDismiss} className="font-mono text-[9px] text-[#dc2626] hover:underline">
+          <span className="font-mono text-[12px] text-[#dc2626]">{error}</span>
+          <button onClick={onErrorDismiss} className="font-mono text-[12px] text-[#dc2626] hover:underline">
             Dismiss
           </button>
         </div>
@@ -171,7 +171,7 @@ export default function SplitHomepage({
               />
             ))}
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#888]">
+          <span className="font-mono text-[12px] uppercase tracking-widest text-[#888]">
             Analyzing pixel data…
           </span>
         </div>
@@ -200,10 +200,10 @@ export default function SplitHomepage({
 
           <div className="relative flex flex-col h-full p-10 md:p-14 lg:p-20">
             <div className="flex items-start justify-between">
-              <span className="font-mono text-[9px] uppercase tracking-[0.5em] text-[#aaa]">01</span>
+              <span className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa]">01</span>
               <div className="flex gap-4">
                 {["JPG", "PNG", "WEBP", "GIF"].map((f) => (
-                  <span key={f} className="font-mono text-[8px] uppercase tracking-widest text-[#ccc]">{f}</span>
+                  <span key={f} className="font-mono text-[12px] uppercase tracking-widest text-[#ccc]">{f}</span>
                 ))}
               </div>
             </div>
@@ -230,11 +230,11 @@ export default function SplitHomepage({
                 Drop Image Here
               </p>
 
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#999] mt-3">
+              <p className="font-mono text-[12px] uppercase tracking-[0.25em] text-[#999] mt-3">
                 Or Click Anywhere To Browse
               </p>
 
-              <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-[#bbb] mt-5">
+              <p className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#bbb] mt-5">
                 JPG · PNG · WEBP · GIF · AVIF · max 10 MB
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function SplitHomepage({
 
         {/* ── RIGHT: Brand Colors ── */}
         <div className="flex flex-col p-10 md:p-14 lg:p-20 min-h-[60vmin] md:min-h-0">
-          <span className="font-mono text-[9px] uppercase tracking-[0.5em] text-[#aaa]">02</span>
+          <span className="font-mono text-[12px] uppercase tracking-[0.5em] text-[#aaa]">02</span>
 
           <div className="py-12 md:py-16">
             <h2 className="font-black text-[clamp(3rem,7vw,5.5rem)] uppercase leading-[0.86] tracking-tighter text-[#0a0a0a]">
@@ -261,7 +261,7 @@ export default function SplitHomepage({
 
           {/* Harmony mode picker */}
           <div className="mb-8">
-            <p className="font-mono text-[8px] uppercase tracking-[0.4em] text-[#aaa] mb-3">
+            <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#aaa] mb-3">
               Color Harmony
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -269,7 +269,7 @@ export default function SplitHomepage({
                 <button
                   key={mode.id}
                   onClick={() => setHarmonyMode(mode.id)}
-                  className="font-mono text-[8px] uppercase tracking-[0.2em] px-3 py-1.5 transition-all"
+                  className="font-mono text-[12px] uppercase tracking-[0.2em] px-3 py-1.5 transition-all"
                   style={{
                     backgroundColor: harmonyMode === mode.id ? "#0a0a0a" : "transparent",
                     color: harmonyMode === mode.id ? "#f9f9f7" : "#888",
@@ -309,16 +309,16 @@ export default function SplitHomepage({
                 <div key={role} className="flex items-center gap-5">
                   {/* Label */}
                   <div className="min-w-[80px]">
-                    <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#888]">
+                    <span className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#888]">
                       {role}
                     </span>
                     {role !== "primary" && (
-                      <span className="font-mono text-[7px] block text-[#bbb] mt-0.5">
+                      <span className="font-mono text-[12px] block text-[#bbb] mt-0.5">
                         {auto ? "auto" : "custom"}
                       </span>
                     )}
                     {role === "primary" && (
-                      <span className="font-mono text-[7px] block text-[#dc2626] mt-0.5">required</span>
+                      <span className="font-mono text-[12px] block text-[#dc2626] mt-0.5">required</span>
                     )}
                   </div>
 
@@ -346,18 +346,18 @@ export default function SplitHomepage({
                         ? generated[role as keyof typeof generated]
                         : role === "primary" ? "#6366f1" : "optional"
                     }
-                    className="flex-1 font-mono text-[11px] text-[#0a0a0a] bg-transparent border-b-2 border-[#e8e8e4] pb-2 outline-none focus:border-[#0a0a0a] transition-colors placeholder-[#ccc] max-w-[150px]"
+                    className="flex-1 font-mono text-[12px] text-[#0a0a0a] bg-transparent border-b-2 border-[#e8e8e4] pb-2 outline-none focus:border-[#0a0a0a] transition-colors placeholder-[#ccc] max-w-[150px]"
                   />
                 </div>
               );
             })}
 
             {formError && (
-              <p className="font-mono text-[9px] text-[#dc2626] pt-1">{formError}</p>
+              <p className="font-mono text-[12px] text-[#dc2626] pt-1">{formError}</p>
             )}
 
             {primaryValid && (
-              <p className="font-mono text-[8px] text-[#aaa] leading-relaxed pt-1">
+              <p className="font-mono text-[12px] text-[#aaa] leading-relaxed pt-1">
                 Secondary, Tertiary and Accent auto-generated from Primary if left blank.
               </p>
             )}
@@ -368,7 +368,7 @@ export default function SplitHomepage({
             <button
               onClick={handleGenerate}
               disabled={isLoading}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] bg-[#0a0a0a] text-white px-10 py-4 hover:bg-[#1a1a1a] active:bg-[#333] transition-colors disabled:opacity-40"
+              className="font-mono text-[12px] uppercase tracking-[0.2em] bg-[#0a0a0a] text-white px-10 py-4 hover:bg-[#1a1a1a] active:bg-[#333] transition-colors disabled:opacity-40"
             >
               Generate System →
             </button>
@@ -378,10 +378,10 @@ export default function SplitHomepage({
 
       {/* ── Bottom bar ── */}
       <div className="border-t-2 border-[#0a0a0a] px-8 md:px-12 py-4 flex items-center justify-between shrink-0">
-        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb]">
           Colors · Typography · Spacing · Radius · Shadows · Components · WCAG · CSS / Tailwind / Figma
         </p>
-        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
           Janvi Guliyan · {new Date().getFullYear()}
         </p>
       </div>

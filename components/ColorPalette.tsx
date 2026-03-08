@@ -41,10 +41,10 @@ export default function ColorPalette({ colors }: Props) {
     <div>
       {/* Section header */}
       <div className="border-b border-[#0a0a0a] px-6 py-3 flex items-center justify-between">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#888]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#888]">
           02 / Dominant Colors
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#aaa]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#aaa]">
           Click to copy hex
         </p>
       </div>
@@ -92,7 +92,7 @@ export default function ColorPalette({ colors }: Props) {
                 style={{ borderColor: hexToRgba(contrast, 0.15) }}
               >
                 <span
-                  className="font-mono text-[9px] uppercase tracking-wider block"
+                  className="font-mono text-[12px] uppercase tracking-wider block"
                   style={{ color: contrast, opacity: isCopied ? 1 : 0.75 }}
                 >
                   {isCopied ? "Copied!" : hex}
@@ -107,10 +107,10 @@ export default function ColorPalette({ colors }: Props) {
       <div className="border-b border-[#0a0a0a]">
         {/* Light variations header */}
         <div className="px-6 py-2 border-b border-[#e8e8e4] flex items-center justify-between">
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#aaa]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#aaa]">
             Light Variations
           </p>
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#ccc]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#ccc]">
             +35% · +55% · +75%
           </p>
         </div>
@@ -137,10 +137,10 @@ export default function ColorPalette({ colors }: Props) {
 
         {/* Dark variations header */}
         <div className="px-6 py-2 border-b border-[#e8e8e4] flex items-center justify-between">
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#aaa]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#aaa]">
             Dark Variations
           </p>
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#ccc]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#ccc]">
             −30% · −55% · −75%
           </p>
         </div>
@@ -176,10 +176,10 @@ export default function ColorPalette({ colors }: Props) {
               i < colors.length - 1 ? "border-r border-[#e8e8e4]" : ""
             }`}
           >
-            <span className="font-mono text-[10px] uppercase tracking-wider text-[#555] block">
+            <span className="font-mono text-[12px] uppercase tracking-wider text-[#555] block">
               {copied === hex ? "Copied!" : hex}
             </span>
-            <span className="font-mono text-[8px] uppercase tracking-widest text-[#bbb] block mt-0.5">
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[#bbb] block mt-0.5">
               Color {String(i + 1).padStart(2, "0")}
             </span>
           </button>
