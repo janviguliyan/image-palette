@@ -157,18 +157,30 @@ export default function TypographySystem({
   const [overrides, setOverrides] = useState<OverrideMap>({});
   const [screenSize, setScreenSize] = useState<ScreenSize>("desktop");
 
-  // Dynamically load Google Fonts when selection changes
+  // Track all font links — only clean up on unmount, never remove on font change
+  // (removing the link causes the font to briefly revert to fallback)
+  const fontLinksRef = useRef<HTMLLinkElement[]>([]);
+
   useEffect(() => {
-    const families = [primaryFont, secondaryFont]
+    [primaryFont, secondaryFont]
       .filter((f, i, arr) => arr.indexOf(f) === i) // deduplicate
-      .map((f) => f.replace(/ /g, "+") + ":wght@400;500;600;700;800;900")
-      .join("&family=");
-    const link = document.createElement("link");
-    link.rel  = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
-    document.head.appendChild(link);
-    return () => { document.head.removeChild(link); };
+      .forEach((f) => {
+        const href = `https://fonts.googleapis.com/css2?family=${f.replace(/ /g, "+")}:wght@400;500;600;700;800;900&display=swap`;
+        if (!document.querySelector(`link[href="${href}"]`)) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = href;
+          document.head.appendChild(link);
+          fontLinksRef.current.push(link);
+        }
+      });
   }, [primaryFont, secondaryFont]);
+
+  // Clean up all font links only when the component unmounts
+  useEffect(() => {
+    const links = fontLinksRef.current;
+    return () => { links.forEach((l) => { if (document.head.contains(l)) document.head.removeChild(l); }); };
+  }, []);
 
   const getToken = (t: TypographyToken): TypographyToken => ({
     ...t,
