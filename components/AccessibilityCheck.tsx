@@ -136,8 +136,10 @@ function WcagBadge({ label, pass }: { label: string; pass: boolean }) {
   return (
     <div className="flex flex-col gap-1 items-center">
       <div
-        className="flex items-center gap-2 px-2 py-1.5 font-mono text-[14px]"
-        style={{ backgroundColor: "#1a1c1e", color: "#f6f6f8" }}
+        className={`flex items-center gap-2 px-2 py-1.5 font-mono text-[14px] font-semibold border 
+        ${
+          pass ? "text-[#126b37]" : "text-[#b42720]"
+        }`}
       >
         <span>{pass ? "Pass" : "Fail"}</span>
         <span className="text-[12px]">{pass ? "✓" : "✕"}</span>
@@ -667,16 +669,16 @@ export default function AccessibilityCheck({ ds }: Props) {
       </div>
 
       {/* Disclaimer */}
-      <div className="border border-[#e8e8e4] bg-[#fffbeb] px-6 py-3 flex items-start gap-3">
+      {/* <div className="border border-[#e8e8e4] bg-[#fffbeb] px-6 py-3 flex items-start gap-3">
         <span className="font-mono text-[12px] text-[#92400e] shrink-0 mt-0.5">⚠</span>
         <p className="font-mono text-[12px] text-[#92400e] leading-relaxed">
           Auto-generated palette — verify contrast ratios manually before shipping to production.
           WCAG 2.1 AA requires 4.5:1 for normal text, 3:1 for large text (18pt+ or 14pt+ bold).
         </p>
-      </div>
+      </div> */}
 
       {/* Combo grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {combos.length === 0 ? (
           <p className="col-span-full font-mono text-[12px] text-[#aaa] text-center py-8">
             No WCAG AA-passing combinations found in this palette.
@@ -684,7 +686,7 @@ export default function AccessibilityCheck({ ds }: Props) {
         ) : (
           combos.map((combo, i) => <ContrastCard key={i} {...combo} />)
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
