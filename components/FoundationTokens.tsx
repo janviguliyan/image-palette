@@ -27,7 +27,7 @@ export default function FoundationTokens({ ds }: Props) {
   };
 
   return (
-    <div className="border-b-2 border-[#0a0a0a]">
+    <div className="border-y-2 border-[#0a0a0a]">
       {/* Section header */}
       <div className="border-b border-[#0a0a0a] px-8 md:px-12 py-14 md:py-20 relative overflow-hidden">
         <span className="absolute right-8 md:right-12 top-0 bottom-0 flex items-center font-black text-[clamp(7rem,18vw,14rem)] leading-none tracking-tighter text-[#0a0a0a] opacity-[0.05] select-none pointer-events-none">
