@@ -376,6 +376,19 @@ export function ExportModal({ ds, primaryFont, secondaryFont, overrides, trigger
                   </li>
                 ))}
               </ol>
+              {
+                activeTab === "figma-plugin" && (
+                  <div className="relative w-[60%] aspect-video overflow-hidden bg-black my-4">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src="https://www.youtube.com/embed/_i8xr0NiPP8?autoplay=1"
+                      title="Demo video"
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )
+              }
             </div>
           )}
 
@@ -452,7 +465,7 @@ export default function ExportTriggers({
 
   return (
     <>
-      <div className="border-b-2 border-[#0a0a0a] flex flex-col sm:flex-row">
+      <div className="border-t-2 border-[#0a0a0a] flex flex-col sm:flex-row">
         {/* Label cell */}
         <div className="border-b sm:border-b-0 sm:border-r-2 border-[#0a0a0a] px-8 md:px-12 py-7 flex items-center shrink-0">
           <p className="font-mono text-[12px] uppercase tracking-[0.4em] text-[#888]">Export As</p>

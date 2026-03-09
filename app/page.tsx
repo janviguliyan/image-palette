@@ -156,16 +156,20 @@ export default function Home() {
                   onClick={() => setExportTab("css")}
                   className="font-mono text-[13px] px-5 py-2.5 flex items-center gap-2 transition-opacity hover:opacity-85"
                   style={{
-                    backgroundColor: designSystem.roles.primary,
+                    // backgroundColor: designSystem.roles.primary,
+                    backgroundColor: "black",
                     color: "#f6f6f8",
-                    border: `1px solid ${designSystem.roles.primary}`,
+                    // border: `1px solid ${designSystem.roles.primary}`,
                   }}
                 >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  {/* <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M6 1v7M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
                     <path d="M1.5 10h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square"/>
+                  </svg> */}
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 13.3333C3.63333 13.3333 3.31955 13.2029 3.05866 12.942C2.79733 12.6807 2.66666 12.3667 2.66666 12V10H4V12H12V10H13.3333V12C13.3333 12.3667 13.2029 12.6807 12.942 12.942C12.6807 13.2029 12.3667 13.3333 12 13.3333H4ZM7.33333 10.6667V5.23334L5.6 6.96667L4.66666 6.00001L8 2.66667L11.3333 6.00001L10.4 6.96667L8.66666 5.23334V10.6667H7.33333Z" fill="white"/>
                   </svg>
-                  Download / Copy
+                  Export Design System
                 </button>
                 <button
                   onClick={handleReset}
