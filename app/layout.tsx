@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import FeedbackWidget from "@/components/FeedbackWidget";
 
 // export const metadata: Metadata = {
 //   title: "Design System Generator — Palette from Image or Brand Colors",
@@ -50,7 +51,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#fafafa]">{children}</body>
+      <script async src="https://tally.so/widgets/embed.js"></script>
+      <body className="min-h-screen bg-[#fafafa]">
+        {children}
+        <FeedbackWidget />
+      </body>
     </html>
   );
 }
