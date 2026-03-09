@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
+import { Analytics } from "@vercel/analytics/next"
 
 // export const metadata: Metadata = {
 //   title: "Design System Generator — Palette from Image or Brand Colors",
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#fafafa]">
         {children}
         <FeedbackWidget />
+        <Analytics />
       </body>
     </html>
   );
