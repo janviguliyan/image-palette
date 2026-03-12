@@ -329,6 +329,9 @@ export default function SplitHomepage({
             Design System Generator
           </span>
         </div>
+        <span className="font-mono text-[16px] text-[#FFFFFF] bg-[#0a0a0a] px-3 py-2 uppercase tracking-[0.2em] hover:bg-[#2A2A2A] active:bg-[#333] transition-colors">
+          <a href="https://www.linkedin.com/in/janvi-guliyan-5bb10023a/" target="_blank" rel="noopener noreferrer">CONTACT US</a>
+        </span>
         <span className="font-mono text-[12px] uppercase tracking-[0.3em] text-[#bbb] hidden sm:block">
           Generate · Export · Use
         </span>

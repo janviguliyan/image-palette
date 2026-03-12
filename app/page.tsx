@@ -171,6 +171,10 @@ export default function Home() {
                   </svg>
                   Export Design System
                 </button>
+                {/* <span className="font-mono text-[16px] text-[#FFFFFF] bg-[#0a0a0a] px-3 py-2 uppercase tracking-[0.2em] hover:bg-[#2A2A2A] active:bg-[#333] transition-colors"> */}
+                <span className="font-mono text-[13px] border border-black px-5 py-2.5 flex items-center gap-2 hover:bg-black hover:text-white transition-colors">
+                  <a href="https://www.linkedin.com/in/janvi-guliyan-5bb10023a/" target="_blank" rel="noopener noreferrer">CONTACT US</a>
+                </span>
                 <button
                   onClick={handleReset}
                   className="font-mono text-[13px] border border-black px-5 py-2.5 flex items-center gap-2 hover:bg-black hover:text-white transition-colors"
