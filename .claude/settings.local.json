@@ -10,7 +10,9 @@
       "Bash(node \"D:\\\\Self\\\\design\\\\inspiration-project\\\\image-palette\\\\node_modules\\\\typescript\\\\bin\\\\tsc\" --noEmit --project tsconfig.json)",
       "Bash(where gh)",
       "Bash(node \"D:/Self/design/inspiration-project/image-palette/node_modules/typescript/bin/tsc\" --noEmit)",
-      "Bash(node \"D:/Self/design/inspiration-project/image-palette/node_modules/typescript/bin/tsc\" --noEmit --project tsconfig.json)"
+      "Bash(node \"D:/Self/design/inspiration-project/image-palette/node_modules/typescript/bin/tsc\" --noEmit --project tsconfig.json)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

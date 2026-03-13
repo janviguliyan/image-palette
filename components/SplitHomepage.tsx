@@ -325,9 +325,11 @@ export default function SplitHomepage({
       <div className="border-b-2 border-[#0a0a0a] px-8 md:px-12 py-5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-3.5 h-3.5 bg-[#0a0a0a]" />
-          <span className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#0a0a0a]">
-            Design System Generator
-          </span>
+            <a href="/" className="hover:font-bold" aria-label="Design System Generator homepage">
+              <span className="font-mono text-[12px] uppercase tracking-[0.35em] text-[#0a0a0a]">
+                Design System Generator
+              </span>
+            </a>
         </div>
         <span className="font-mono text-[16px] text-[#FFFFFF] bg-[#0a0a0a] px-3 py-2 uppercase tracking-[0.2em] hover:bg-[#2A2A2A] active:bg-[#333] transition-colors">
           <a href="https://www.linkedin.com/in/janvi-guliyan-5bb10023a/" target="_blank" rel="noopener noreferrer">CONTACT US</a>
