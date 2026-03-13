@@ -268,26 +268,40 @@ function ButtonCell({
 // ── Button state matrix table ──────────────────────────────────────────────
 const STATES = ["default", "hover", "focused", "active", "disabled"] as const;
 
-function ButtonsTable({ ds }: { ds: DesignSystem }) {
-  const ROWS: { label: string; variant: "primary" | "secondary" | "ghost" | "danger"; size: "lg" | "sm" }[] = [
-    { label: "Primary LG",   variant: "primary",   size: "lg" },
-    { label: "Primary SM",   variant: "primary",   size: "sm" },
-    { label: "Secondary LG", variant: "secondary", size: "lg" },
-    { label: "Secondary SM", variant: "secondary", size: "sm" },
-    { label: "Ghost LG",     variant: "ghost",     size: "lg" },
-    { label: "Ghost SM",     variant: "ghost",     size: "sm" },
-    { label: "Danger LG",    variant: "danger",    size: "lg" },
-    { label: "Danger SM",    variant: "danger",    size: "sm" },
-  ];
+const BUTTON_GROUPS: {
+  groupLabel: string;
+  variant: "primary" | "secondary" | "ghost" | "danger";
+  rows: { label: string; size: "lg" | "sm" }[];
+}[] = [
+  {
+    groupLabel: "Primary",
+    variant: "primary",
+    rows: [{ label: "Large", size: "lg" }, { label: "Small", size: "sm" }],
+  },
+  {
+    groupLabel: "Secondary",
+    variant: "secondary",
+    rows: [{ label: "Large", size: "lg" }, { label: "Small", size: "sm" }],
+  },
+  {
+    groupLabel: "Ghost",
+    variant: "ghost",
+    rows: [{ label: "Large", size: "lg" }, { label: "Small", size: "sm" }],
+  },
+  {
+    groupLabel: "Danger",
+    variant: "danger",
+    rows: [{ label: "Large", size: "lg" }, { label: "Small", size: "sm" }],
+  },
+];
 
+function ButtonsTable({ ds }: { ds: DesignSystem }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse" style={{ minWidth: 720 }}>
+      <table className="w-full border-collapse" style={{ minWidth: 760 }}>
         <thead>
-          <tr className="border-b border-[#e8e8e4]">
-            <th className="text-left pb-3 pr-6" style={{ width: 120 }}>
-              <span className="font-mono text-[11px] uppercase tracking-[0.4em] text-[#bbb]">Variant</span>
-            </th>
+          <tr className="border-b-2 border-[#e8e8e4]">
+            <th className="text-left pb-3 pr-4" style={{ width: 140 }} />
             {STATES.map((s) => (
               <th key={s} className="text-left pb-3 px-3">
                 <span className="font-mono text-[11px] uppercase tracking-[0.4em] text-[#bbb]">{s}</span>
@@ -296,29 +310,137 @@ function ButtonsTable({ ds }: { ds: DesignSystem }) {
           </tr>
         </thead>
         <tbody>
-          {ROWS.map(({ label, variant, size }, i) => (
-            <tr key={label} className={i < ROWS.length - 1 ? "border-b border-[#f0f0ec]" : ""}>
-              <td className="py-2.5 pr-6">
-                <span className="font-mono text-[11px] text-[#888] uppercase tracking-widest">{label}</span>
-              </td>
-              {STATES.map((state) => (
-                <td key={state} className="py-2.5 px-3">
-                  <div className="flex flex-col gap-1.5">
-                    <ButtonCell variant={variant} size={size} state={state} iconPosition="none" ds={ds} />
-                    <ButtonCell variant={variant} size={size} state={state} iconPosition="right" ds={ds} />
-                    <ButtonCell variant={variant} size={size} state={state} iconPosition="left" ds={ds} />
-                    <ButtonCell variant={variant} size={size} state={state} iconPosition="only" ds={ds} />
-                  </div>
+          {BUTTON_GROUPS.map(({ groupLabel, variant, rows }) => (
+            <>
+              {/* Group header row */}
+              <tr key={`${groupLabel}-header`} className="border-t border-[#e8e8e4]">
+                <td
+                  colSpan={STATES.length + 1}
+                  className="pt-5 pb-2 pr-4"
+                >
+                  <span
+                    className="font-mono font-bold text-[11px] uppercase tracking-[0.5em]"
+                    style={{ color: ds.scales.primary["500"] }}
+                  >
+                    {groupLabel}
+                  </span>
                 </td>
+              </tr>
+              {/* Size rows */}
+              {rows.map(({ label, size }, ri) => (
+                <tr key={`${groupLabel}-${size}`} className={ri < rows.length - 1 ? "border-b border-[#f5f5f2]" : ""}>
+                  <td className="py-3 pr-4">
+                    <span className="font-mono text-[11px] text-[#aaa] uppercase tracking-widest">{label}</span>
+                  </td>
+                  {STATES.map((state) => (
+                    <td key={state} className="py-3 px-3">
+                      <div className="flex flex-col gap-2">
+                        <ButtonCell variant={variant} size={size} state={state} iconPosition="none"  ds={ds} />
+                        <ButtonCell variant={variant} size={size} state={state} iconPosition="left"  ds={ds} />
+                        <ButtonCell variant={variant} size={size} state={state} iconPosition="right" ds={ds} />
+                        <ButtonCell variant={variant} size={size} state={state} iconPosition="only"  ds={ds} />
+                      </div>
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
+            </>
           ))}
         </tbody>
       </table>
       <p className="font-mono text-[11px] text-[#ccc] mt-4">
-        Each cell shows: text only · icon right · icon left · icon only
+        Each cell: text only · icon left · icon right · icon only
       </p>
     </div>
+  );
+}
+
+// ── Icon picker dropdown (reusable) ───────────────────────────────────────
+function IconPicker({
+  selected,
+  onSelect,
+  accentColor,
+}: {
+  selected: string;
+  onSelect: (name: string) => void;
+  accentColor: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-2 px-3 py-1.5 border font-mono text-[11px] text-[#444] transition-colors hover:border-black/30"
+        style={{ borderColor: open ? accentColor : "#ddd", background: "#fff" }}
+      >
+        <span className="flex items-center gap-2">
+          <span style={{ display: "flex", width: 14, height: 14, alignItems: "center", justifyContent: "center", color: accentColor }}>
+            {M3_ICONS[selected]}
+          </span>
+          {selected}
+        </span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.15s", flexShrink: 0 }}>
+          <path d="M2 4l4 4 4-4" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+      {open && (
+        <div
+          className="absolute top-full left-0 right-0 z-50 bg-white border border-[#ddd] shadow-lg"
+          style={{ maxHeight: 200, overflowY: "auto" }}
+        >
+          {M3_ICON_NAMES.map((name) => (
+            <button
+              key={name}
+              onClick={() => { onSelect(name); setOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#f5f5f5] transition-colors text-left"
+              style={{ background: selected === name ? `${accentColor}14` : "transparent" }}
+            >
+              <span style={{ display: "flex", width: 14, height: 14, alignItems: "center", justifyContent: "center", color: selected === name ? accentColor : "#666" }}>
+                {M3_ICONS[name]}
+              </span>
+              <span className="font-mono text-[11px]" style={{ color: selected === name ? accentColor : "#555" }}>{name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Toggle switch (reusable) ───────────────────────────────────────────────
+function ToggleSwitch({
+  value,
+  onChange,
+  label,
+  accentColor,
+}: {
+  value: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  accentColor: string;
+}) {
+  return (
+    <label className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onChange(!value)}>
+      <span
+        style={{
+          width: 36, height: 20, borderRadius: 9999,
+          background: value ? accentColor : "#ddd",
+          display: "flex", alignItems: "center", padding: "0 2px",
+          position: "relative", transition: "background 0.15s", flexShrink: 0,
+        }}
+      >
+        <span
+          style={{
+            width: 14, height: 14, borderRadius: 9999, background: "#fff",
+            position: "absolute",
+            left: value ? 20 : 2,
+            transition: "left 0.15s",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+          }}
+        />
+      </span>
+      <span className="font-mono text-[12px] text-[#555]">{label}</span>
+    </label>
   );
 }
 
@@ -326,23 +448,23 @@ function ButtonsTable({ ds }: { ds: DesignSystem }) {
 function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
   const [variant, setVariant] = useState<"primary" | "secondary" | "ghost" | "danger">("primary");
   const [size, setSize] = useState<"lg" | "sm">("lg");
-  const [showLeftIcon, setShowLeftIcon] = useState(false);
+  const [showLeftIcon, setShowLeftIcon]   = useState(false);
   const [showRightIcon, setShowRightIcon] = useState(true);
-  const [showText, setShowText] = useState(true);
-  const [selectedIcon, setSelectedIcon] = useState("Arrow Right");
-  const [iconDropOpen, setIconDropOpen] = useState(false);
+  const [showText, setShowText]           = useState(true);
+  const [leftIcon, setLeftIcon]           = useState("Arrow Left");
+  const [rightIcon, setRightIcon]         = useState("Arrow Right");
 
-  const p = ds.scales.primary;
+  const p        = ds.scales.primary;
   const resolved = resolveButtonStyle(variant, "default", ds);
-  const iconEl = M3_ICONS[selectedIcon];
 
-  const px = size === "lg" ? "20px" : "14px";
-  const py = size === "lg" ? "11px" : "7px";
+  const px       = size === "lg" ? "20px" : "14px";
+  const py       = size === "lg" ? "11px" : "7px";
   const fontSize = size === "lg" ? "0.9rem" : "0.78rem";
   const iconSize = size === "lg" ? 18 : 14;
-  const scaledIcon = (
+
+  const scaledIcon = (name: string) => (
     <span style={{ display: "flex", width: iconSize, height: iconSize, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-      {M3_ICONS[selectedIcon]}
+      {M3_ICONS[name]}
     </span>
   );
 
@@ -351,7 +473,8 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Controls panel */}
-      <div className="flex flex-col gap-5" style={{ minWidth: 260 }}>
+      <div className="flex flex-col gap-5" style={{ minWidth: 280 }}>
+
         {/* Variant */}
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa] mb-2">Variant</p>
@@ -363,9 +486,9 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
                 className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 border transition-colors"
                 style={{
                   borderColor: variant === v ? p["500"] : "#ddd",
-                  background: variant === v ? p["50"] : "#fff",
-                  color: variant === v ? p["700"] : "#666",
-                  fontWeight: variant === v ? 700 : 400,
+                  background:  variant === v ? p["50"]  : "#fff",
+                  color:       variant === v ? p["700"] : "#666",
+                  fontWeight:  variant === v ? 700 : 400,
                 }}
               >
                 {v}
@@ -385,9 +508,9 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
                 className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 border transition-colors"
                 style={{
                   borderColor: size === s ? p["500"] : "#ddd",
-                  background: size === s ? p["50"] : "#fff",
-                  color: size === s ? p["700"] : "#666",
-                  fontWeight: size === s ? 700 : 400,
+                  background:  size === s ? p["50"]  : "#fff",
+                  color:       size === s ? p["700"] : "#666",
+                  fontWeight:  size === s ? 700 : 400,
                 }}
               >
                 {s === "lg" ? "Large" : "Small"}
@@ -396,82 +519,30 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
           </div>
         </div>
 
-        {/* Toggles */}
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa] mb-2">Toggles</p>
-          <div className="flex flex-col gap-2">
-            {[
-              { label: "Left Icon",  value: showLeftIcon,  set: setShowLeftIcon },
-              { label: "Right Icon", value: showRightIcon, set: setShowRightIcon },
-              { label: "Text",       value: showText,      set: setShowText },
-            ].map(({ label, value, set }) => (
-              <label key={label} className="flex items-center gap-3 cursor-pointer" onClick={() => set(!value)}>
-                <span
-                  style={{
-                    width: 36, height: 20, borderRadius: 9999,
-                    background: value ? p["500"] : "#ddd",
-                    display: "flex", alignItems: "center", padding: "0 2px",
-                    position: "relative", transition: "background 0.15s",
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 14, height: 14, borderRadius: 9999, background: "#fff",
-                      position: "absolute",
-                      left: value ? 20 : 2,
-                      transition: "left 0.15s",
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                    }}
-                  />
-                </span>
-                <span className="font-mono text-[12px] text-[#555]">{label}</span>
-              </label>
-            ))}
-          </div>
+        {/* Left icon toggle + picker */}
+        <div className="flex flex-col gap-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa]">Left Icon</p>
+          <ToggleSwitch value={showLeftIcon} onChange={setShowLeftIcon} label="Show left icon" accentColor={p["500"]} />
+          {showLeftIcon && (
+            <IconPicker selected={leftIcon} onSelect={setLeftIcon} accentColor={p["500"]} />
+          )}
         </div>
 
-        {/* Icon picker */}
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa] mb-2">Icon (Material 3)</p>
-          <div className="relative">
-            <button
-              onClick={() => setIconDropOpen((o) => !o)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 border font-mono text-[12px] text-[#444] transition-colors hover:border-black/30"
-              style={{ borderColor: iconDropOpen ? p["500"] : "#ddd", background: "#fff" }}
-            >
-              <span className="flex items-center gap-2">
-                <span style={{ display: "flex", width: 16, height: 16, alignItems: "center", justifyContent: "center", color: p["500"] }}>
-                  {M3_ICONS[selectedIcon]}
-                </span>
-                {selectedIcon}
-              </span>
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ transform: iconDropOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
-                <path d="M2 4l4 4 4-4" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-
-            {iconDropOpen && (
-              <div
-                className="absolute top-full left-0 right-0 z-50 bg-white border border-[#ddd] shadow-lg"
-                style={{ maxHeight: 220, overflowY: "auto" }}
-              >
-                {M3_ICON_NAMES.map((name) => (
-                  <button
-                    key={name}
-                    onClick={() => { setSelectedIcon(name); setIconDropOpen(false); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#f5f5f5] transition-colors text-left"
-                    style={{ background: selectedIcon === name ? p["50"] : "transparent" }}
-                  >
-                    <span style={{ display: "flex", width: 16, height: 16, alignItems: "center", justifyContent: "center", color: selectedIcon === name ? p["500"] : "#666" }}>
-                      {M3_ICONS[name]}
-                    </span>
-                    <span className="font-mono text-[11px]" style={{ color: selectedIcon === name ? p["700"] : "#555" }}>{name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Right icon toggle + picker */}
+        <div className="flex flex-col gap-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa]">Right Icon</p>
+          <ToggleSwitch value={showRightIcon} onChange={setShowRightIcon} label="Show right icon" accentColor={p["500"]} />
+          {showRightIcon && (
+            <IconPicker selected={rightIcon} onSelect={setRightIcon} accentColor={p["500"]} />
+          )}
         </div>
+
+        {/* Text toggle */}
+        <div className="flex flex-col gap-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa]">Label</p>
+          <ToggleSwitch value={showText} onChange={setShowText} label="Show button text" accentColor={p["500"]} />
+        </div>
+
       </div>
 
       {/* Live preview */}
@@ -480,33 +551,28 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
           <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa] mb-4">Live Preview</p>
           <div
             className="flex items-center justify-center"
-            style={{
-              minHeight: 140,
-              background: "#f8f8f8",
-              border: "1px solid #e8e8e4",
-              borderRadius: 8,
-            }}
+            style={{ minHeight: 140, background: "#f8f8f8", border: "1px solid #e8e8e4", borderRadius: 8 }}
           >
             <button
               style={{
-                background: resolved.bg,
-                color: resolved.color,
-                border: resolved.border ? `1.5px solid ${resolved.border}` : "none",
-                borderRadius: 8,
-                padding: isIconOnly ? py : `${py} ${px}`,
-                fontWeight: 600,
+                background:    resolved.bg,
+                color:         resolved.color,
+                border:        resolved.border ? `1.5px solid ${resolved.border}` : "none",
+                borderRadius:  8,
+                padding:       isIconOnly ? `${py} ${py}` : `${py} ${px}`,
+                fontWeight:    600,
                 fontSize,
                 letterSpacing: "0.02em",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: showLeftIcon || showRightIcon ? 8 : 0,
-                transition: "all 0.15s",
+                cursor:        "pointer",
+                display:       "flex",
+                alignItems:    "center",
+                gap:           (showLeftIcon || showRightIcon) && showText ? 8 : showLeftIcon && showRightIcon ? 8 : 0,
+                transition:    "all 0.15s",
               }}
             >
-              {showLeftIcon  && scaledIcon}
-              {showText      && "Button"}
-              {showRightIcon && scaledIcon}
+              {showLeftIcon  && scaledIcon(leftIcon)}
+              {showText      && <span>Button</span>}
+              {showRightIcon && scaledIcon(rightIcon)}
               {!showText && !showLeftIcon && !showRightIcon && (
                 <span style={{ fontFamily: "monospace", fontSize: 11, opacity: 0.5 }}>empty</span>
               )}
@@ -514,37 +580,37 @@ function InteractiveButtonBuilder({ ds }: { ds: DesignSystem }) {
           </div>
         </div>
 
-        {/* All states preview */}
+        {/* All states */}
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#aaa] mb-3">All States</p>
           <div className="flex flex-wrap gap-3">
             {STATES.map((state) => {
-              const s = resolveButtonStyle(variant, state, ds);
+              const s    = resolveButtonStyle(variant, state, ds);
               const ring = state === "focused" ? `0 0 0 3px ${variant === "danger" ? ds.semantic.error["100"] : p["100"]}` : undefined;
               return (
                 <div key={state} className="flex flex-col items-center gap-1.5">
                   <button
                     disabled={state === "disabled"}
                     style={{
-                      background: s.bg,
-                      color: s.color,
-                      border: s.border ? `1.5px solid ${s.border}` : "none",
-                      borderRadius: 6,
-                      padding: `${py} ${px}`,
-                      fontWeight: 600,
+                      background:    s.bg,
+                      color:         s.color,
+                      border:        s.border ? `1.5px solid ${s.border}` : "none",
+                      borderRadius:  6,
+                      padding:       isIconOnly ? `${py} ${py}` : `${py} ${px}`,
+                      fontWeight:    600,
                       fontSize,
-                      opacity: s.opacity,
-                      cursor: s.cursor ?? "pointer",
-                      boxShadow: ring,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      transition: "none",
+                      opacity:       s.opacity,
+                      cursor:        s.cursor ?? "pointer",
+                      boxShadow:     ring,
+                      display:       "flex",
+                      alignItems:    "center",
+                      gap:           6,
+                      transition:    "none",
                     }}
                   >
-                    {showLeftIcon  && scaledIcon}
-                    {showText      && "Button"}
-                    {showRightIcon && scaledIcon}
+                    {showLeftIcon  && scaledIcon(leftIcon)}
+                    {showText      && <span>Button</span>}
+                    {showRightIcon && scaledIcon(rightIcon)}
                   </button>
                   <span className="font-mono text-[10px] text-[#aaa] capitalize">{state}</span>
                 </div>

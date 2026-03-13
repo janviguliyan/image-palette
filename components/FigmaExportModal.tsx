@@ -129,65 +129,74 @@ function buildDS(ds: DesignSystem, primaryFont = "Inter", secondaryFont = "Robot
   const e600Rgb  = toRgb(e600), e700Rgb = toRgb(e700);
   const eTextRgb = isLight(e500) ? { r: 0.04, g: 0.04, b: 0.04 } : { r: 1, g: 1, b: 1 };
 
-  // ── Buttons: full matrix — 4 Types × 2 Sizes × 4 Icon modes × 5 States = 160 variants ──
+  // ── Buttons: 4 Types × 2 Sizes × 4 Icon combos × 5 States = 160 variants ──
+  // ONE 'Button' component set — Type/Size/LeftIcon/RightIcon/State as Figma variant properties
   type RgbO = { r: number; g: number; b: number };
   type RgbN = RgbO | null;
   type BtnEntry = {
     name: string; bg: RgbN; text: RgbO; border: RgbN;
     padX: number; padY: number; fs: number;
     disabled: boolean; iconLeft: boolean; iconRight: boolean;
-    iconOnly: boolean; focused: boolean; dangerBtn: boolean;
+    focused: boolean; dangerBtn: boolean;
   };
+
+  // 4 icon combos — text always shown
+  const BTN_COMBOS = [
+    { l: false, r: false, n: "LeftIcon=Off, RightIcon=Off" },
+    { l: true,  r: false, n: "LeftIcon=On, RightIcon=Off"  },
+    { l: false, r: true,  n: "LeftIcon=Off, RightIcon=On"  },
+    { l: true,  r: true,  n: "LeftIcon=On, RightIcon=On"   },
+  ] as const;
+
   const mkB = (
-    type: string, size: "LG"|"SM", icon: "None"|"Left"|"Right"|"Only", state: string,
+    type: string, size: "LG"|"SM",
+    leftIcon: boolean, rightIcon: boolean, comboName: string,
+    state: string,
     bg: RgbN, txt: RgbO, border: RgbN, focused = false, danger = false
   ): BtnEntry => {
-    const iconO = icon === "Only";
-    const lg    = size === "LG";
+    const lg = size === "LG";
     return {
-      name: `Type=${type}, Size=${size}, Icon=${icon}, State=${state}`,
+      name:  `Type=${type}, Size=${lg ? "Large" : "Small"}, ${comboName}, State=${state}`,
       bg, text: txt, border,
-      padX: iconO ? (lg ? 10 : 7) : (lg ? 18 : 12),
-      padY: lg ? 10 : 6,
-      fs:   lg ? 13 : 11,
+      padX:  lg ? 28 : 18,
+      padY:  lg ? 14 : 10,
+      fs:    lg ? 15 : 13,
       disabled:  state === "Disabled",
-      iconLeft:  icon === "Left",
-      iconRight: icon === "Right",
-      iconOnly:  iconO,
+      iconLeft:  leftIcon,
+      iconRight: rightIcon,
       focused, dangerBtn: danger,
     };
   };
 
-  const ICON_MODES = ["None", "Left", "Right", "Only"] as const;
-  const BTN_SIZES  = ["LG", "SM"] as const;
+  const BTN_SIZES = ["LG", "SM"] as const;
   const buttons: BtnEntry[] = [];
 
   for (const sz of BTN_SIZES) {
-    for (const ic of ICON_MODES) {
+    for (const c of BTN_COMBOS) {
       // Primary
-      buttons.push(mkB("Primary", sz, ic, "Default",  pRgb,    pTextRgb, null));
-      buttons.push(mkB("Primary", sz, ic, "Hover",    p600Rgb, pTextRgb, null));
-      buttons.push(mkB("Primary", sz, ic, "Focused",  pRgb,    pTextRgb, null,    true));
-      buttons.push(mkB("Primary", sz, ic, "Active",   p700Rgb, pTextRgb, null));
-      buttons.push(mkB("Primary", sz, ic, "Disabled", p200Rgb, pRgb,     null));
+      buttons.push(mkB("Primary", sz, c.l, c.r, c.n, "Default",  pRgb,    pTextRgb, null));
+      buttons.push(mkB("Primary", sz, c.l, c.r, c.n, "Hover",    p600Rgb, pTextRgb, null));
+      buttons.push(mkB("Primary", sz, c.l, c.r, c.n, "Focused",  pRgb,    pTextRgb, null,    true));
+      buttons.push(mkB("Primary", sz, c.l, c.r, c.n, "Active",   p700Rgb, pTextRgb, null));
+      buttons.push(mkB("Primary", sz, c.l, c.r, c.n, "Disabled", p200Rgb, pRgb,     null));
       // Secondary
-      buttons.push(mkB("Secondary", sz, ic, "Default",  p50Rgb,  p700Rgb, p200Rgb));
-      buttons.push(mkB("Secondary", sz, ic, "Hover",    p100Rgb, p700Rgb, pRgb));
-      buttons.push(mkB("Secondary", sz, ic, "Focused",  p50Rgb,  p700Rgb, pRgb,    true));
-      buttons.push(mkB("Secondary", sz, ic, "Active",   p100Rgb, p700Rgb, p600Rgb));
-      buttons.push(mkB("Secondary", sz, ic, "Disabled", p50Rgb,  p700Rgb, p200Rgb));
+      buttons.push(mkB("Secondary", sz, c.l, c.r, c.n, "Default",  p50Rgb,  p700Rgb, p200Rgb));
+      buttons.push(mkB("Secondary", sz, c.l, c.r, c.n, "Hover",    p100Rgb, p700Rgb, pRgb));
+      buttons.push(mkB("Secondary", sz, c.l, c.r, c.n, "Focused",  p50Rgb,  p700Rgb, pRgb,    true));
+      buttons.push(mkB("Secondary", sz, c.l, c.r, c.n, "Active",   p100Rgb, p700Rgb, p600Rgb));
+      buttons.push(mkB("Secondary", sz, c.l, c.r, c.n, "Disabled", p50Rgb,  p700Rgb, p200Rgb));
       // Ghost
-      buttons.push(mkB("Ghost", sz, ic, "Default",  null,    p700Rgb, p200Rgb));
-      buttons.push(mkB("Ghost", sz, ic, "Hover",    p50Rgb,  p700Rgb, pRgb));
-      buttons.push(mkB("Ghost", sz, ic, "Focused",  p50Rgb,  p700Rgb, pRgb,    true));
-      buttons.push(mkB("Ghost", sz, ic, "Active",   p100Rgb, p700Rgb, p200Rgb));
-      buttons.push(mkB("Ghost", sz, ic, "Disabled", null,    p700Rgb, p200Rgb));
+      buttons.push(mkB("Ghost", sz, c.l, c.r, c.n, "Default",  null,    p700Rgb, p200Rgb));
+      buttons.push(mkB("Ghost", sz, c.l, c.r, c.n, "Hover",    p50Rgb,  p700Rgb, pRgb));
+      buttons.push(mkB("Ghost", sz, c.l, c.r, c.n, "Focused",  p50Rgb,  p700Rgb, pRgb,    true));
+      buttons.push(mkB("Ghost", sz, c.l, c.r, c.n, "Active",   p100Rgb, p700Rgb, p200Rgb));
+      buttons.push(mkB("Ghost", sz, c.l, c.r, c.n, "Disabled", null,    p700Rgb, p200Rgb));
       // Danger
-      buttons.push(mkB("Danger", sz, ic, "Default",  eRgb,    eTextRgb, null,    false, true));
-      buttons.push(mkB("Danger", sz, ic, "Hover",    e600Rgb, eTextRgb, null,    false, true));
-      buttons.push(mkB("Danger", sz, ic, "Focused",  eRgb,    eTextRgb, null,    true,  true));
-      buttons.push(mkB("Danger", sz, ic, "Active",   e700Rgb, eTextRgb, null,    false, true));
-      buttons.push(mkB("Danger", sz, ic, "Disabled", e200Rgb, eRgb,     null,    false, true));
+      buttons.push(mkB("Danger", sz, c.l, c.r, c.n, "Default",  eRgb,    eTextRgb, null,    false, true));
+      buttons.push(mkB("Danger", sz, c.l, c.r, c.n, "Hover",    e600Rgb, eTextRgb, null,    false, true));
+      buttons.push(mkB("Danger", sz, c.l, c.r, c.n, "Focused",  eRgb,    eTextRgb, null,    true,  true));
+      buttons.push(mkB("Danger", sz, c.l, c.r, c.n, "Active",   e700Rgb, eTextRgb, null,    false, true));
+      buttons.push(mkB("Danger", sz, c.l, c.r, c.n, "Disabled", e200Rgb, eRgb,     null,    false, true));
     }
   }
 
@@ -296,6 +305,12 @@ function buildDS(ds: DesignSystem, primaryFont = "Inter", secondaryFont = "Robot
       pageBg:    { r: 0.97, g: 0.97, b: 0.97 },
     },
     components: { buttons, badges, alerts, inputs, iconButtons, checkboxes, radios, toggles },
+    previewColors: {
+      primary:   { bg: pRgb   as RgbN, text: pTextRgb, border: null    as RgbN },
+      secondary: { bg: p50Rgb as RgbN, text: p700Rgb,  border: p200Rgb as RgbN },
+      ghost:     { bg: null   as RgbN, text: p700Rgb,  border: p200Rgb as RgbN },
+      danger:    { bg: eRgb   as RgbN, text: eTextRgb, border: null    as RgbN },
+    },
     pFont: primaryFont,
     sFont: secondaryFont,
     fontsToLoad: buildFontsToLoad(primaryFont, secondaryFont),
@@ -356,6 +371,10 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "  // Last resort: return as-is and hope Figma handles it",
     "  return {family:fam, style:sty};",
     "}",
+    "// Material Icons availability — used throughout all component sections",
+    "var hasMat = !!loaded['Material Icons/Regular'];",
+    "var matFont = hasMat ? {family:'Material Icons',style:'Regular'} : fn(DS.sFont,'Regular');",
+    "var matChar = hasMat ? 'arrow_forward' : '\u2192';",
     "",
     "// ── 3. Text Styles (typography) ───────────────────────────────────────────",
     "var existingTextStyles = {};",
@@ -547,18 +566,48 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "}",
     "cy += 130;",
     "",
-    "// ── Components: Buttons — 4 Types × 2 Sizes × 4 Icon Modes × 5 States ──────────────",
-    "console.log('Buttons:', DS.components.buttons.length);",
-    "cy += 8;",
+    "// ── Components: Buttons ───────────────────────────────────────────────────",
+    "// Component set: Type(Primary/Secondary/Ghost/Danger) × Size(Large/Small) × LeftIcon × RightIcon × State",
     "cy = mksec('Components / Buttons', cy);",
+    "console.log('Buttons total:', DS.components.buttons.length);",
+    "",
+    "// ── Search for icon components from user's file ───────────────────────────",
+    "var userIconComps = [];",
+    "try {",
+    "  var allFileComps = figma.root.findAll(function(n) { return n.type === 'COMPONENT'; });",
+    "  for (var ili = 0; ili < allFileComps.length && userIconComps.length < 50; ili++) {",
+    "    var iln = allFileComps[ili];",
+    "    var ilnm = (iln.name || '').toLowerCase();",
+    "    var ilpar = iln.parent ? (iln.parent.name || '').toLowerCase() : '';",
+    "    if (ilnm.includes('icon') || ilpar.includes('icon') || ilpar.includes('icons')) userIconComps.push(iln);",
+    "  }",
+    "} catch(ie) { console.warn('Icon search error:', String(ie)); }",
+    "var defaultIconComp = userIconComps.length > 0 ? userIconComps[0] : null;",
+    "console.log('Icon components found in file:', userIconComps.length, defaultIconComp ? ('first: ' + defaultIconComp.name) : 'none — using Material Icons text fallback');",
+    "",
+    "// ── Layout helpers: Type/State rows × Size/IconCombo cols (mirrors reference grid) ──",
+    "var BTN_TMAP = {Primary:0, Secondary:1, Ghost:2, Danger:3};",
+    "var BTN_SMAP = {Default:0, Hover:1, Focused:2, Active:3, Disabled:4};",
+    "var BTN_ZMAP = {Large:0, Small:1};",
+    "var BROW = 80; var BTGAP = 56; var BCOLW = 210; var BCMGAP = 48;",
+    "function pbn(n) {",
+    "  var tm=n.match(/Type=(\\w+)/); var sm=n.match(/State=(\\w+)/); var zm=n.match(/Size=(\\w+)/);",
+    "  var lm=n.match(/LeftIcon=(\\w+)/); var rm=n.match(/RightIcon=(\\w+)/);",
+    "  var ti=tm&&BTN_TMAP[tm[1]]!==undefined?BTN_TMAP[tm[1]]:0;",
+    "  var si=sm&&BTN_SMAP[sm[1]]!==undefined?BTN_SMAP[sm[1]]:0;",
+    "  var zi=zm&&BTN_ZMAP[zm[1]]!==undefined?BTN_ZMAP[zm[1]]:0;",
+    "  var lo=lm&&lm[1]==='On'; var ro=rm&&rm[1]==='On';",
+    "  return {ti:ti, si:si, zi:zi, ci:(lo?1:0)+(ro?2:0)};",
+    "}",
+    "",
     "var btnComps = [];",
     "var btnBy = cy;",
-    "var btnCols = 10; var btnColW = 148; var btnRowH = 58;",
-    "var hasMat = !!loaded['Material Icons/Regular'];",
-    "var iconFont = hasMat ? {family:'Material Icons',style:'Regular'} : fn(DS.sFont,'Regular');",
-    "var iconCharFwd = hasMat ? 'arrow_forward' : '>';",
-    "for (var bi = 0; bi < DS.components.buttons.length; bi++) {",
-    "  var bd = DS.components.buttons[bi];",
+    "var iconLeftInsts = [];",
+    "var iconRightInsts = [];",
+    "",
+    "for (var bgi = 0; bgi < DS.components.buttons.length; bgi++) {",
+    "  var bd = DS.components.buttons[bgi];",
+    "  var bl = pbn(bd.name);",
     "  var bc = figma.createComponent();",
     "  bc.name = bd.name;",
     "  bc.layoutMode = 'HORIZONTAL';",
@@ -566,61 +615,107 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "  bc.counterAxisSizingMode = 'AUTO';",
     "  bc.paddingLeft = bc.paddingRight = bd.padX;",
     "  bc.paddingTop = bc.paddingBottom = bd.padY;",
-    "  bc.cornerRadius = 6;",
-    "  bc.itemSpacing = 6;",
+    "  bc.cornerRadius = 8;",
+    "  bc.itemSpacing = 8;",
     "  bc.primaryAxisAlignItems = 'CENTER';",
     "  bc.counterAxisAlignItems = 'CENTER';",
     "  bc.fills = bd.bg ? [{type:'SOLID',color:bd.bg}] : [];",
     "  if (bd.border) { bc.strokes=[{type:'SOLID',color:bd.border}]; bc.strokeWeight=1.5; bc.strokeAlign='INSIDE'; }",
-    "  bc.opacity = bd.disabled ? 0.45 : 1;",
-    "  // Focus ring via DROP_SHADOW spread",
+    "  bc.opacity = bd.disabled ? 0.4 : 1;",
     "  if (bd.focused) {",
     "    try {",
-    "      var fc = bd.border || bd.bg || {r:0.5,g:0.5,b:0.5};",
-    "      bc.effects = [{type:'DROP_SHADOW',color:{r:fc.r,g:fc.g,b:fc.b,a:0.4},offset:{x:0,y:0},radius:0,spread:3,visible:true,blendMode:'NORMAL'}];",
+    "      var fbc = bd.border || bd.bg || {r:0.5,g:0.5,b:0.5};",
+    "      bc.effects = [{type:'DROP_SHADOW',color:{r:fbc.r,g:fbc.g,b:fbc.b,a:0.35},offset:{x:0,y:0},radius:0,spread:4,visible:true,blendMode:'NORMAL'}];",
     "    } catch(e) {}",
     "  }",
-    "  // Icon-only: just icon, square padding",
-    "  if (bd.iconOnly) {",
-    "    var bico = figma.createText();",
-    "    bico.fontName = iconFont; bico.fontSize = bd.fs + 2;",
-    "    bico.characters = iconCharFwd;",
-    "    bico.fills = [{type:'SOLID',color:bd.text}];",
-    "    bc.appendChild(bico);",
-    "  } else {",
-    "    if (bd.iconLeft) {",
-    "      var bicoL = figma.createText();",
-    "      bicoL.fontName = iconFont; bicoL.fontSize = bd.fs + 2;",
-    "      bicoL.characters = iconCharFwd;",
-    "      bicoL.fills = [{type:'SOLID',color:bd.text}];",
-    "      bc.appendChild(bicoL);",
-    "    }",
-    "    try {",
-    "      var bt = figma.createText();",
-    "      bt.fontName = fn(DS.sFont,'SemiBold'); bt.fontSize = bd.fs;",
-    "      bt.characters = bd.name.indexOf('Size=LG') >= 0 ? 'Button' : 'Btn';",
-    "      bt.fills = [{type:'SOLID',color:bd.text}];",
-    "      bc.appendChild(bt);",
-    "    } catch(e) { console.warn('btn text fail', bd.name); }",
-    "    if (bd.iconRight) {",
-    "      var bicoR = figma.createText();",
-    "      bicoR.fontName = iconFont; bicoR.fontSize = bd.fs + 2;",
-    "      bicoR.characters = iconCharFwd;",
-    "      bicoR.fills = [{type:'SOLID',color:bd.text}];",
-    "      bc.appendChild(bicoR);",
+    "  // ── Left icon slot ────────────────────────────────────────────────────",
+    "  if (bd.iconLeft) {",
+    "    if (defaultIconComp) {",
+    "      try {",
+    "        var bLi = defaultIconComp.createInstance();",
+    "        try { bLi.resize(bd.fs+2, bd.fs+2); } catch(re) {}",
+    "        bc.appendChild(bLi);",
+    "        iconLeftInsts.push(bLi);",
+    "      } catch(e) {",
+    "        var bLf = figma.createText(); bLf.fontName=matFont; bLf.fontSize=bd.fs+2;",
+    "        bLf.characters=matChar; bLf.fills=[{type:'SOLID',color:bd.text}]; bc.appendChild(bLf);",
+    "      }",
+    "    } else {",
+    "      var bL = figma.createText(); bL.fontName=matFont; bL.fontSize=bd.fs+2;",
+    "      bL.characters=matChar; bL.fills=[{type:'SOLID',color:bd.text}]; bc.appendChild(bL);",
     "    }",
     "  }",
-    "  bc.x = PAD + (bi % btnCols) * btnColW;",
-    "  bc.y = btnBy + Math.floor(bi / btnCols) * btnRowH;",
+    "  // ── Label ─────────────────────────────────────────────────────────────",
+    "  try {",
+    "    var bT = figma.createText();",
+    "    bT.fontName=fn(DS.sFont,'SemiBold'); bT.fontSize=bd.fs;",
+    "    bT.characters=bd.fs>=15?'Button Label':'Button';",
+    "    bT.fills=[{type:'SOLID',color:bd.text}];",
+    "    bc.appendChild(bT);",
+    "  } catch(e) { console.warn('btn text fail', bd.name); }",
+    "  // ── Right icon slot ───────────────────────────────────────────────────",
+    "  if (bd.iconRight) {",
+    "    if (defaultIconComp) {",
+    "      try {",
+    "        var bRi = defaultIconComp.createInstance();",
+    "        try { bRi.resize(bd.fs+2, bd.fs+2); } catch(re2) {}",
+    "        bc.appendChild(bRi);",
+    "        iconRightInsts.push(bRi);",
+    "      } catch(e) {",
+    "        var bRf = figma.createText(); bRf.fontName=matFont; bRf.fontSize=bd.fs+2;",
+    "        bRf.characters=matChar; bRf.fills=[{type:'SOLID',color:bd.text}]; bc.appendChild(bRf);",
+    "      }",
+    "    } else {",
+    "      var bR = figma.createText(); bR.fontName=matFont; bR.fontSize=bd.fs+2;",
+    "      bR.characters=matChar; bR.fills=[{type:'SOLID',color:bd.text}]; bc.appendChild(bR);",
+    "    }",
+    "  }",
+    "  // ── Position: cols = (iconCombo × 2sizes + sizeIdx) × colW; rows = typeGroup + stateRow",
+    "  var btypeH = 5*BROW+BTGAP;",
+    "  var bcomboW = 2*BCOLW+BCMGAP;",
+    "  bc.x = PAD + bl.ci*bcomboW + bl.zi*BCOLW;",
+    "  bc.y = btnBy + bl.ti*btypeH + bl.si*BROW;",
     "  pg.appendChild(bc);",
     "  btnComps.push(bc);",
     "}",
     "if (btnComps.length) {",
     "  try {",
     "    var btnSet = figma.combineAsVariants(btnComps, pg);",
-    "    btnSet.name = 'Button'; btnSet.x = PAD; btnSet.y = cy;",
-    "    cy += btnSet.height + 56;",
-    "  } catch(e) { console.error('Button set failed:', String(e)); cy = btnBy + Math.ceil(DS.components.buttons.length / btnCols) * btnRowH + 56; }",
+    "    btnSet.name = 'Button';",
+    "    btnSet.x = PAD; btnSet.y = cy;",
+    "    // ── Wire icon instance-swap component properties ──────────────────────",
+    "    if (defaultIconComp) {",
+    "      try {",
+    "        if (iconLeftInsts.length > 0) {",
+    "          var liPropId = btnSet.addComponentProperty('Left Icon', 'INSTANCE_SWAP', defaultIconComp.key);",
+    "          if (userIconComps.length > 1) {",
+    "            var liPref = [];",
+    "            for (var lpv=0; lpv<Math.min(userIconComps.length,24); lpv++) liPref.push({type:'COMPONENT',key:userIconComps[lpv].key});",
+    "            try { btnSet.editComponentProperty('Left Icon', {preferredValues:liPref}); } catch(ep) {}",
+    "          }",
+    "          for (var lii=0; lii<iconLeftInsts.length; lii++) {",
+    "            try { var lr={}; lr['mainComponent']=liPropId; iconLeftInsts[lii].componentPropertyReferences=lr; } catch(e) {}",
+    "          }",
+    "        }",
+    "        if (iconRightInsts.length > 0) {",
+    "          var riPropId = btnSet.addComponentProperty('Right Icon', 'INSTANCE_SWAP', defaultIconComp.key);",
+    "          if (userIconComps.length > 1) {",
+    "            var riPref = [];",
+    "            for (var rpv=0; rpv<Math.min(userIconComps.length,24); rpv++) riPref.push({type:'COMPONENT',key:userIconComps[rpv].key});",
+    "            try { btnSet.editComponentProperty('Right Icon', {preferredValues:riPref}); } catch(ep2) {}",
+    "          }",
+    "          for (var rii=0; rii<iconRightInsts.length; rii++) {",
+    "            try { var rr={}; rr['mainComponent']=riPropId; iconRightInsts[rii].componentPropertyReferences=rr; } catch(e) {}",
+    "          }",
+    "        }",
+    "        console.log('Icon swap props added — Left:', iconLeftInsts.length, 'Right:', iconRightInsts.length);",
+    "      } catch(e) { console.warn('Icon swap setup failed (non-fatal):', String(e)); }",
+    "    }",
+    "    cy += btnSet.height + 72;",
+    "  } catch(e) {",
+    "    console.error('Button set failed:', String(e));",
+    "    cy = btnBy + 4*(5*BROW+BTGAP) + 72;",
+    "  }",
     "}",
     "",
     "// ── Components: Badges ────────────────────────────────────────────────────",
@@ -795,9 +890,9 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "  if (ib.border) { ibc.strokes=[{type:'SOLID',color:ib.border}]; ibc.strokeWeight=1.5; ibc.strokeAlign='INSIDE'; }",
     "  ibc.opacity = ib.disabled ? 0.4 : 1;",
     "  var it = figma.createText();",
-    "  it.fontName = loaded['Material Icons/Regular'] ? {family:'Material Icons',style:'Regular'} : fn(DS.sFont,'Regular');",
+    "  it.fontName = matFont;",
     "  it.fontSize = 20;",
-    "  it.characters = loaded['Material Icons/Regular'] ? 'add' : '+';",
+    "  it.characters = hasMat ? 'add' : '+';",
     "  it.fills = [{type:'SOLID',color:ib.icon}];",
     "  ibc.appendChild(it);",
     "  ibc.x = PAD + (ibi % 6) * 56;",
@@ -958,7 +1053,8 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "}",
     "",
     "figma.viewport.scrollAndZoomIntoView(pg.children);",
-    "figma.notify('Design System ready — '+Object.keys(DS.colors).length+' colors, '+DS.typography.length+' type styles, '+DS.components.buttons.length+' button variants, '+DS.components.inputs.length+' input variants, Checkbox + Radio + Toggle components!', {timeout:8000});",
+    "figma.notify('Design System ready — '+Object.keys(DS.colors).length+' colors, '+DS.components.buttons.length+' button variants, Checkbox + Radio + Toggle!', {timeout:8000});",
+    "figma.closePlugin();",
   ].join("\n");
 
   const script = [
@@ -974,7 +1070,8 @@ export function buildFigmaPluginScript(ds: DesignSystem, primaryFont = "Inter", 
     "//   Text styles   — " + TYPOGRAPHY_SCALE.length + " typography styles (Display → Code)",
     "//   Effect styles — " + SHADOW_SCALE.length + " elevation/shadow styles",
     "//   Design System page — colors, type table, spacing, radius, shadows, components",
-    "//   Components    — Button (4 types × 2 sizes × 4 icon modes × 5 states = 160 variants)",
+    "//   Components    — Button (1 set: Type/Size/LeftIcon/RightIcon/State = 160 variants)",
+    "//                          (Primary/Secondary/Ghost/Danger × Large/Small × 4 icon combos × 5 states)",
     "//                   Input (Email empty/filled/error/disabled LG+SM, Textarea, Select, Search)",
     "//                   Badge (6 × 2 styles), Alert (4 types)",
     "//                   Checkbox (4 states), Radio (3 states), Toggle (3 states)",
@@ -1050,7 +1147,7 @@ export default function FigmaExportModal({ ds, onClose }: Props) {
               `${TYPOGRAPHY_SCALE.length} text styles  (typography)`,
               `${SHADOW_SCALE.length} effect styles  (elevations)`,
               "Design System page (visual guide)",
-              "Button set  (4 types × 2 sizes × icon variants)",
+              "Button component set  (160 variants: Type × Size × Icon × State)",
               "Badge component set  (6×2 variants)",
               "Alert component set  (4 variants)",
               "Input component set  (4 states × 2 sizes)",
